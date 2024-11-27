@@ -2,6 +2,8 @@
 
 A modern web application for transcribing audio and video files using a clean, intuitive interface.
 
+🔗 **[Live Demo](https://jaytuduri.github.io/omniscribe-web/)**
+
 ## Features
 
 - **Multiple Input Methods**
