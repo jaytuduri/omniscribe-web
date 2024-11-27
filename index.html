@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omniscribe Transcription</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Omniscribe Transcription</h1>
+        
+        <!-- Input Screen -->
+        <div class="screen active" id="inputScreen">
+            <div class="input-screen">
+                <div class="input-option" id="uploadOption">
+                    <div class="upload-icon">📁</div>
+                    <h2>Upload File</h2>
+                    <p>Upload an audio or video file</p>
+                    <input type="file" id="fileInput" class="file-input" accept="audio/*,video/*">
+                    <button class="button primary" onclick="document.getElementById('fileInput').click()">
+                        Choose File
+                    </button>
+                </div>
+                
+                <div class="input-option" id="recordOption">
+                    <div class="record-icon">🎙️</div>
+                    <h2>Record Audio</h2>
+                    <p>Record audio using your microphone</p>
+                    <button id="recordButton" class="button secondary">
+                        Start Recording
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Preview Section -->
+            <div id="previewSection" style="display: none;">
+                <h3>Preview</h3>
+                <audio id="previewPlayer" controls></audio>
+                <div style="text-align: center;">
+                    <button id="transcribeButton" class="button primary">
+                        Transcribe Audio
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Progress Screen -->
+        <div class="screen" id="progressScreen">
+            <h2>Transcribing your audio...</h2>
+            <div class="progress-bar">
+                <div class="progress-bar-fill"></div>
+            </div>
+            <p>Please wait while we process your audio file</p>
+        </div>
+        
+        <!-- Result Screen -->
+        <div class="screen" id="resultScreen">
+            <h2>Transcription Result</h2>
+            <audio id="audioPlayer" controls></audio>
+            <div class="transcription" id="transcriptionText"></div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button onclick="resetApp()" class="button primary">
+                    Transcribe Another
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/app.js"></script>
+</body>
+</html>
