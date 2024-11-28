@@ -58,3 +58,11 @@ export function formatTranscriptionResult(result, responseFormat) {
     }
     return result.text;
 }
+
+export function resetApp() {
+    showScreen('inputScreen');
+    hidePreviewSection();
+    updateTranscriptionText('');
+    updateRecordButton(false);
+    clearFileInput();
+}

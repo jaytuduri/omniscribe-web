@@ -94,4 +94,10 @@ document.addEventListener('DOMContentLoaded', () => {
         ui.showPreviewSection();
         audioRecorder.setCurrentAudioBlob(file);
     });
+
+    // Handle reset button click
+    document.getElementById('resetButton').addEventListener('click', () => {
+        ui.resetApp();
+        audioRecorder.clearAudioData();
+    });
 });
