@@ -186,8 +186,8 @@ async function initializeRecording() {
         mediaRecorder.start(1000); // Collect data every second
         console.log('Recording started');
         
-        document.getElementById('recordButton').textContent = 'Stop Recording';
-        document.getElementById('recordButton').classList.add('recording');
+        const recordButton = document.getElementById('recordButton');
+        recordButton.innerHTML = '<i class="fas fa-circle recording"></i> Stop Recording';
         isRecording = true;
         
     } catch (error) {
@@ -209,8 +209,18 @@ async function initializeRecording() {
         alert(errorMessage);
         
         // Reset UI
-        document.getElementById('recordButton').textContent = 'Start Recording';
-        document.getElementById('recordButton').classList.remove('recording');
+        const recordButton = document.getElementById('recordButton');
+        recordButton.innerHTML = '<i class="fas fa-circle"></i> Start Recording';
+        isRecording = false;
+    }
+}
+
+async function stopRecording() {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+        mediaRecorder.stream.getTracks().forEach(track => track.stop());
+        const recordButton = document.getElementById('recordButton');
+        recordButton.innerHTML = '<i class="fas fa-circle"></i> Start Recording';
         isRecording = false;
     }
 }
@@ -219,8 +229,8 @@ function resetApp() {
     showScreen('inputScreen');
     document.getElementById('previewSection').style.display = 'none';
     document.getElementById('transcriptionText').textContent = '';
-    document.getElementById('recordButton').textContent = 'Start Recording';
-    document.getElementById('recordButton').classList.remove('recording');
+    const recordButton = document.getElementById('recordButton');
+    recordButton.innerHTML = '<i class="fas fa-circle"></i> Start Recording';
     document.getElementById('fileInput').value = '';
     currentAudioBlob = null;
     audioChunks = [];
@@ -234,13 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('recordButton').addEventListener('click', async () => {
         if (isRecording) {
             // Stop recording
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                mediaRecorder.stop();
-                stopMediaTracks();
-            }
-            document.getElementById('recordButton').textContent = 'Start New Recording';
-            document.getElementById('recordButton').classList.remove('recording');
-            isRecording = false;
+            await stopRecording();
         } else {
             // Hide preview section when starting new recording
             document.getElementById('previewSection').style.display = 'none';

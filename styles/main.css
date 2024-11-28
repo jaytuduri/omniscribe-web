@@ -8,6 +8,8 @@
     --hover-color: #5a5a5a;
     --gradient-start: #9333EA;
     --gradient-end: #C084FC;
+    --pixel-color: #9333EA;
+    --button-hover-color: #666666;
 }
 
 * {
@@ -110,22 +112,35 @@ h3 {
 
 .input-option {
     background: white;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
+    position: relative;
+    border: none;
+    border-radius: 0;
     padding: 1.5rem;
     text-align: center;
     transition: all 0.3s ease;
     cursor: pointer;
+    image-rendering: pixelated;
 }
 
-.input-option:hover {
-    border-color: var(--primary-color);
+.input-option::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 1px solid var(--border-color);
+    clip-path: polygon(
+        0 2px, 2px 2px, 2px 0,
+        calc(100% - 2px) 0, calc(100% - 2px) 2px, 100% 2px,
+        100% calc(100% - 2px), calc(100% - 2px) calc(100% - 2px), calc(100% - 2px) 100%,
+        2px 100%, 2px calc(100% - 2px), 0 calc(100% - 2px)
+    );
+    pointer-events: none;
 }
 
-.option-icon {
-    font-size: 2rem;
-    color: var(--primary-color);
-    margin-bottom: 1.5rem;
+.input-option:hover::before {
+    border-color: var(--pixel-color);
 }
 
 .button-container {
@@ -133,43 +148,67 @@ h3 {
     margin-top: 2rem;
 }
 
+/* Pixel-style buttons */
 .button {
     padding: 0.75rem 1.5rem;
     border: none;
-    border-radius: 4px;
+    border-radius: 0;
     cursor: pointer;
     font-size: 1rem;
     font-weight: 500;
-    transition: all 0.3s ease;
+    position: relative;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
     gap: 0.5rem;
+    color: white;
+    transition: all 0.3s ease;
+    background-color: var(--primary-color);
+    clip-path: polygon(
+        0 2px, 2px 2px, 2px 0,
+        calc(100% - 2px) 0, calc(100% - 2px) 2px, 100% 2px,
+        100% calc(100% - 2px), calc(100% - 2px) calc(100% - 2px), calc(100% - 2px) 100%,
+        2px 100%, 2px calc(100% - 2px), 0 calc(100% - 2px)
+    );
+}
+
+.button:hover {
+    background-color: var(--button-hover-color);
+}
+
+.button.primary {
+    background-color: var(--primary-color);
+}
+
+.button.primary:hover {
+    background-color: var(--button-hover-color);
+}
+
+.button.secondary {
+    background-color: var(--secondary-color);
+}
+
+.button.secondary:hover {
+    background-color: var(--button-hover-color);
+}
+
+.button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .button i {
     font-size: 1rem;
 }
 
-.button.primary {
-    background-color: var(--primary-color);
-    color: white;
+.button i.recording {
+    color: #ff4444;
+    animation: pulse 2s infinite;
 }
 
-.button.secondary {
-    background-color: var(--secondary-color);
-    color: white;
-}
-
-.button:hover {
-    background-color: var(--hover-color);
-    transform: translateY(-2px);
-}
-
-.button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
 }
 
 .progress-bar {
@@ -221,13 +260,31 @@ h3 {
 .input-field {
     font-family: inherit;
     padding: 0.75rem;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
+    border: none;
+    border-radius: 0;
     font-size: 0.9rem;
     background-color: white;
     color: var(--text-color);
     width: 100%;
+    position: relative;
     transition: border-color 0.2s ease;
+}
+
+.input-field::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 1px solid var(--border-color);
+    clip-path: polygon(
+        0 2px, 2px 2px, 2px 0,
+        calc(100% - 2px) 0, calc(100% - 2px) 2px, 100% 2px,
+        100% calc(100% - 2px), calc(100% - 2px) calc(100% - 2px), calc(100% - 2px) 100%,
+        2px 100%, 2px calc(100% - 2px), 0 calc(100% - 2px)
+    );
+    pointer-events: none;
 }
 
 .input-field:focus {
@@ -267,4 +324,64 @@ audio {
     0% { width: 0%; }
     50% { width: 70%; }
     100% { width: 100%; }
+}
+
+.pixel-spinner {
+    width: 80px;
+    height: 80px;
+    position: relative;
+    margin: 2rem auto;
+}
+
+.pixel {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background-color: var(--pixel-color);
+    animation: pixelMove 1.5s infinite ease-in-out;
+}
+
+.pixel:nth-child(1) { transform: translate(0, 0); animation-delay: 0s; }
+.pixel:nth-child(2) { transform: translate(24px, 0); animation-delay: 0.1s; }
+.pixel:nth-child(3) { transform: translate(48px, 0); animation-delay: 0.2s; }
+.pixel:nth-child(4) { transform: translate(72px, 0); animation-delay: 0.3s; }
+.pixel:nth-child(5) { transform: translate(0, 72px); animation-delay: 0.4s; }
+.pixel:nth-child(6) { transform: translate(24px, 72px); animation-delay: 0.5s; }
+.pixel:nth-child(7) { transform: translate(48px, 72px); animation-delay: 0.6s; }
+.pixel:nth-child(8) { transform: translate(72px, 72px); animation-delay: 0.7s; }
+
+@keyframes pixelMove {
+    0% { transform: translate(var(--x), var(--y)) scale(1); }
+    50% { transform: translate(var(--x), var(--y)) scale(0.5); opacity: 0.5; }
+    100% { transform: translate(var(--x), var(--y)) scale(1); }
+}
+
+/* Footer styles */
+.footer {
+    margin-top: 3rem;
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--secondary-color);
+}
+
+.footer a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    margin: 0 0.5rem;
+}
+
+.footer a:hover {
+    color: var(--primary-color);
+}
+
+.footer i {
+    font-size: 1rem;
+    vertical-align: middle;
+}
+
+.footer-separator {
+    margin: 0 0.5rem;
+    opacity: 0.5;
 }
