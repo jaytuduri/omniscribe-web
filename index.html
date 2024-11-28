@@ -6,7 +6,7 @@
     <title>Omniscribe Transcription</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Silkscreen&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles/main.css">
 </head>
@@ -43,6 +43,42 @@
             <div id="previewSection" style="display: none;">
                 <h3>Preview</h3>
                 <audio id="previewPlayer" controls></audio>
+                
+                <div class="transcription-options">
+                    <div class="option-group">
+                        <label for="language">Language</label>
+                        <select id="language" class="input-field">
+                            <option value="">Auto-detect</option>
+                            <option value="en">English</option>
+                            <option value="es">Spanish</option>
+                            <option value="fr">French</option>
+                            <option value="de">German</option>
+                            <option value="it">Italian</option>
+                            <option value="pt">Portuguese</option>
+                            <option value="nl">Dutch</option>
+                            <option value="ja">Japanese</option>
+                            <option value="ko">Korean</option>
+                            <option value="zh">Chinese</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="responseFormat">Response Format</label>
+                        <select id="responseFormat" class="input-field">
+                            <option value="json">Standard (JSON)</option>
+                            <option value="verbose_json">Detailed with Timestamps</option>
+                            <option value="text">Text Only</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="prompt">Additional Context (Optional)</label>
+                        <textarea id="prompt" class="input-field" 
+                                placeholder="Add context or specify how to spell unfamiliar words..."
+                                maxlength="500"></textarea>
+                    </div>
+                </div>
+
                 <div class="button-container">
                     <button id="transcribeButton" class="button primary">
                         <i class="fas fa-wand-magic-sparkles"></i> Transcribe Audio

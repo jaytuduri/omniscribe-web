@@ -45,10 +45,23 @@ async function uploadAudio(file) {
     try {
         showScreen('progressScreen');
         
-        // Create FormData and append file
+        // Get transcription options
+        const language = document.getElementById('language').value;
+        const responseFormat = document.getElementById('responseFormat').value;
+        const prompt = document.getElementById('prompt').value.trim();
+        
+        // Create FormData and append file and options
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('response_format', 'json');
+        formData.append('response_format', responseFormat);
+        
+        // Only append non-empty values
+        if (language) {
+            formData.append('language', language);
+        }
+        if (prompt) {
+            formData.append('prompt', prompt);
+        }
         
         console.log('Uploading file:', file.name, 'Size:', file.size, 'Type:', file.type);
         const response = await fetch(API_URL, {
@@ -74,12 +87,37 @@ async function uploadAudio(file) {
             throw new Error(errorMessage);
         }
         
-        const result = JSON.parse(responseText);
+        let result;
+        try {
+            result = responseFormat === 'text' ? { text: responseText } : JSON.parse(responseText);
+        } catch (e) {
+            console.error('Error parsing response:', e);
+            result = { text: responseText };
+        }
         
         // Update UI with results
         const audioPlayer = document.getElementById('audioPlayer');
         audioPlayer.src = URL.createObjectURL(file);
-        document.getElementById('transcriptionText').textContent = result.text;
+        
+        // Handle different response formats
+        if (responseFormat === 'verbose_json' && result.segments) {
+            try {
+                // Format timestamps and text
+                const formattedText = result.segments.map(segment => {
+                    const startTime = new Date(segment.start * 1000).toISOString().substr(11, 8);
+                    const endTime = new Date(segment.end * 1000).toISOString().substr(11, 8);
+                    return `[${startTime} - ${endTime}] ${segment.text}`;
+                }).join('\n');
+                document.getElementById('transcriptionText').textContent = formattedText;
+            } catch (e) {
+                console.error('Error formatting timestamps:', e);
+                // Fallback to displaying just the text
+                document.getElementById('transcriptionText').textContent = result.text || responseText;
+            }
+        } else {
+            // For text or json format, or when segments are not available
+            document.getElementById('transcriptionText').textContent = result.text || responseText;
+        }
         
         // Show the result screen
         showScreen('resultScreen');
