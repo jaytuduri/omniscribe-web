@@ -28,23 +28,44 @@ export function updatePreviewPlayer(audioUrl) {
 }
 
 export function updateTranscriptionText(text) {
-    // Calculate and display stats
+    // Calculate word count
     const wordCount = text.trim().split(/\s+/).length;
-    const statsHtml = `
-        <div class="transcription-stats">
-            <span><strong>Total Words:</strong> ${wordCount}</span>
-        </div>
-    `;
     
-    // Create preview text (first 300 characters)
-    const preview = text.length > 300 ? text.substring(0, 300) + '...' : text;
+    // Update word count display
+    document.getElementById('transcriptionStats').innerHTML = `<i class="fas fa-font"></i> ${wordCount} words`;
     
     // Store full text for download
-    document.getElementById('transcriptionText').dataset.fullText = text;
+    const transcriptionText = document.getElementById('transcriptionText');
+    transcriptionText.dataset.fullText = text;
     
-    // Update the display
-    document.getElementById('transcriptionStats').innerHTML = statsHtml;
-    document.getElementById('transcriptionText').textContent = preview;
+    // Create preview (first 300 characters)
+    const preview = text.length > 300 ? text.substring(0, 300) + '...' : text;
+    
+    // Update the display with preview
+    transcriptionText.textContent = preview;
+    
+    // Show/hide toggle button based on text length
+    const showMoreButton = document.getElementById('showFullTranscription');
+    if (text.length > 300) {
+        showMoreButton.classList.add('visible');
+        showMoreButton.textContent = 'Show Full Transcription';
+        showMoreButton.dataset.expanded = 'false';
+        
+        // Add click handler
+        showMoreButton.onclick = () => {
+            const isExpanded = showMoreButton.dataset.expanded === 'true';
+            if (isExpanded) {
+                transcriptionText.textContent = preview;
+                showMoreButton.textContent = 'Show Full Transcription';
+            } else {
+                transcriptionText.textContent = text;
+                showMoreButton.textContent = 'Show Less';
+            }
+            showMoreButton.dataset.expanded = (!isExpanded).toString();
+        };
+    } else {
+        showMoreButton.classList.remove('visible');
+    }
 }
 
 export function downloadTranscription(format) {

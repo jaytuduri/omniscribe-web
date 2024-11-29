@@ -113,8 +113,11 @@
         <div class="screen" id="resultScreen">
             <h2>Transcription Result</h2>
             <audio id="audioPlayer" controls></audio>
-            <div id="transcriptionStats"></div>
-            <div class="transcription" id="transcriptionText"></div>
+            <div class="transcription">
+                <div id="transcriptionStats" class="word-count"></div>
+                <div id="transcriptionText" class="transcription-content"></div>
+                <button id="showFullTranscription" class="show-more-link">Show Full Transcription</button>
+            </div>
             <div class="button-container action-buttons">
                 <div class="dropdown">
                     <button class="button secondary dropdown-toggle">
