@@ -115,13 +115,41 @@
             <audio id="audioPlayer" controls></audio>
             <div id="transcriptionStats"></div>
             <div class="transcription" id="transcriptionText"></div>
-            <div class="download-buttons">
-                <button onclick="uiManager.downloadTranscription('txt')" class="button primary">
-                    <i class="fas fa-download"></i> Download as TXT
+            <div class="button-container action-buttons">
+                <div class="dropdown">
+                    <button class="button secondary dropdown-toggle">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="#" onclick="uiManager.downloadTranscription('txt')">
+                            <i class="fas fa-file-alt"></i> Text File (.txt)
+                        </a>
+                    </div>
+                </div>
+
+                <button class="button secondary" id="aiCleanupButton">
+                    <i class="fas fa-magic"></i> AI Cleanup
                 </button>
-                <button onclick="uiManager.downloadTranscription('doc')" class="button secondary">
-                    <i class="fas fa-file-word"></i> Download as DOC
-                </button>
+
+                <div class="dropdown">
+                    <button class="button secondary dropdown-toggle">
+                        <i class="fas fa-robot"></i> OmniGenerate
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="#" onclick="uiManager.generateContent('summary')">
+                            <i class="fas fa-compress-alt"></i> Summary
+                        </a>
+                        <a href="#" onclick="uiManager.generateContent('tweet')">
+                            <i class="fab fa-twitter"></i> Tweet Thread
+                        </a>
+                        <a href="#" onclick="uiManager.generateContent('blog')">
+                            <i class="fas fa-blog"></i> Blog Post
+                        </a>
+                        <a href="#" onclick="uiManager.generateContent('custom')">
+                            <i class="fas fa-pencil-alt"></i> Custom
+                        </a>
+                    </div>
+                </div>
             </div>
             <div class="button-container">
                 <button id="resetButton" class="button primary">

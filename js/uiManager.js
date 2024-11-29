@@ -97,6 +97,11 @@ export function resetApp() {
     clearFileInput();
 }
 
+export function generateContent(type) {
+    // Placeholder function for AI content generation
+    alert(`AI ${type} generation coming soon!`);
+}
+
 // Make functions available globally
 window.uiManager = {
     showScreen,
@@ -109,5 +114,6 @@ window.uiManager = {
     getTranscriptionOptions,
     formatTranscriptionResult,
     resetApp,
-    downloadTranscription
+    downloadTranscription,
+    generateContent
 };
