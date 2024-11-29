@@ -27,7 +27,36 @@ export function updatePreviewPlayer(audioUrl) {
 }
 
 export function updateTranscriptionText(text) {
-    document.getElementById('transcriptionText').textContent = text;
+    // Calculate and display stats
+    const wordCount = text.trim().split(/\s+/).length;
+    const statsHtml = `
+        <div class="transcription-stats">
+            <span><strong>Total Words:</strong> ${wordCount}</span>
+        </div>
+    `;
+    
+    // Create preview text (first 300 characters)
+    const preview = text.length > 300 ? text.substring(0, 300) + '...' : text;
+    
+    // Store full text for download
+    document.getElementById('transcriptionText').dataset.fullText = text;
+    
+    // Update the display
+    document.getElementById('transcriptionStats').innerHTML = statsHtml;
+    document.getElementById('transcriptionText').textContent = preview;
+}
+
+export function downloadTranscription(format) {
+    const text = document.getElementById('transcriptionText').dataset.fullText;
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `transcription.${format}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 
 export function clearFileInput() {
@@ -66,3 +95,18 @@ export function resetApp() {
     updateRecordButton(false);
     clearFileInput();
 }
+
+// Make functions available globally
+window.uiManager = {
+    showScreen,
+    updateRecordButton,
+    hidePreviewSection,
+    showPreviewSection,
+    updatePreviewPlayer,
+    updateTranscriptionText,
+    clearFileInput,
+    getTranscriptionOptions,
+    formatTranscriptionResult,
+    resetApp,
+    downloadTranscription
+};

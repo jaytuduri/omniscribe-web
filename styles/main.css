@@ -357,6 +357,34 @@ audio {
     100% { transform: scale(1); }
 }
 
+.transcription-stats {
+    background-color: #f5f5f5;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.transcription-text {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.download-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.download-buttons .button {
+    flex: 1;
+}
+
 /* Footer styles */
 .footer {
     margin-top: 3rem;

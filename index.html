@@ -107,7 +107,16 @@
         <div class="screen" id="resultScreen">
             <h2>Transcription Result</h2>
             <audio id="audioPlayer" controls></audio>
+            <div id="transcriptionStats"></div>
             <div class="transcription" id="transcriptionText"></div>
+            <div class="download-buttons">
+                <button onclick="uiManager.downloadTranscription('txt')" class="button primary">
+                    <i class="fas fa-download"></i> Download as TXT
+                </button>
+                <button onclick="uiManager.downloadTranscription('doc')" class="button secondary">
+                    <i class="fas fa-file-word"></i> Download as DOC
+                </button>
+            </div>
             <div class="button-container">
                 <button id="resetButton" class="button primary">
                     <i class="fas fa-redo"></i> Transcribe Another
