@@ -11,6 +11,11 @@
     <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
+    <div class="theme-switcher">
+        <button id="themeToggle" title="Toggle Theme">
+            <i class="fas fa-desktop"></i>
+        </button>
+    </div>
     <div class="container">
         <h1>Omniscribe</h1>
         
@@ -43,7 +48,11 @@
             <div id="previewSection" style="display: none;">
                 <h3>Preview</h3>
                 <audio id="previewPlayer" controls></audio>
-                
+                <div class="button-container">
+                    <button id="transcribeButton" class="button primary">
+                        <i class="fas fa-wand-magic-sparkles"></i> Transcribe Audio
+                    </button>
+                </div>
                 <div class="transcription-options">
                     <div class="option-group">
                         <label for="language">Language</label>
@@ -77,12 +86,6 @@
                                 placeholder="Add context or specify how to spell unfamiliar words..."
                                 maxlength="500"></textarea>
                     </div>
-                </div>
-
-                <div class="button-container">
-                    <button id="transcribeButton" class="button primary">
-                        <i class="fas fa-wand-magic-sparkles"></i> Transcribe Audio
-                    </button>
                 </div>
             </div>
         </div>
@@ -129,12 +132,8 @@
         <a href="https://github.com/jaytuduri" target="_blank" rel="noopener noreferrer">
             <i class="fab fa-github"></i> jaytuduri
         </a>
-        <span class="footer-separator">•</span>
-        <a href="https://groq.com" target="_blank" rel="noopener noreferrer">
-            powered by groq
-        </a>
     </footer>
     
-    <script src="js/app.js" type="module"></script>
+    <script type="module" src="js/app.js"></script>
 </body>
 </html>
