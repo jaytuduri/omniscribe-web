@@ -1,0 +1,10 @@
+# Documentation
+/docs/
+
+# Common ignore patterns
+node_modules/
+*.log
+.DS_Store
+.env
+.env.local
+.env.*.local
