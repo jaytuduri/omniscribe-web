@@ -56,38 +56,43 @@ body {
     padding: 1.5rem;
 }
 
-h1 {
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+}
+
+.header-left, .header-right {
+    flex: 1;
+}
+
+.header h1 {
     font-family: 'Silkscreen', cursive;
     font-size: 2rem;
     font-weight: 400;
     text-align: center;
     color: var(--text-color);
-    margin-bottom: 2.5rem;
     letter-spacing: 0.05em;
     cursor: pointer;
     transition: color 0.3s ease;
-    background-clip: text;
-    -webkit-background-clip: text;
+    margin: 0;
+    padding: 0;
 }
 
-h1:hover {
-    color: transparent;
-    background-image: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-    -webkit-background-clip: text;
-    background-clip: text;
-    animation: gradientShift 3s ease infinite;
+#themeToggle {
+    background: none;
+    border: none;
+    padding: 0.25rem;
+    cursor: pointer;
+    color: var(--text-color);
+    font-size: 1.2rem;
+    transition: opacity 0.3s ease;
+    float: right;
 }
 
-@keyframes gradientShift {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
+#themeToggle:hover {
+    opacity: 0.8;
 }
 
 h2 {
@@ -387,8 +392,8 @@ audio {
 
 .theme-switcher {
     position: absolute;
-    top: 2.3rem;
-    right: calc((100% - 800px) / 2);
+    top: 1.5rem;
+    right: 1.5rem;
     z-index: 1000;
 }
 
