@@ -24,6 +24,7 @@ export function showPreviewSection() {
 
 export function updatePreviewPlayer(audioUrl) {
     document.getElementById('previewPlayer').src = audioUrl;
+    document.getElementById('audioPlayer').src = audioUrl;
 }
 
 export function updateTranscriptionText(text) {
