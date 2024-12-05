@@ -1,5 +1,7 @@
-export async function uploadAudio(file, apiUrl, options = {}) {
-    const { language, responseFormat, prompt } = options;
+import config from './config.js';
+
+export async function uploadAudio(file, options = {}) {
+    const { language, responseFormat = 'text', prompt } = options;
     
     // Create FormData and append file and options
     const formData = new FormData();
@@ -15,7 +17,7 @@ export async function uploadAudio(file, apiUrl, options = {}) {
     }
     
     console.log('Uploading file:', file.name, 'Size:', file.size, 'Type:', file.type);
-    const response = await fetch(apiUrl, {
+    const response = await fetch(config.API_BASE_URL + '/api/v1/audio/transcriptions', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -45,3 +47,61 @@ export async function uploadAudio(file, apiUrl, options = {}) {
         return { text: responseText };
     }
 }
+
+export async function generateText(text, mode, options = {}) {
+    const endpoint = mode.toLowerCase() === 'cleanup' ? '/api/v1/text/cleanup' : '/api/v1/text/generate';
+    const apiUrl = `${config.API_BASE_URL}${endpoint}`;
+    const { temperature = 0.7, custom_prompt } = options;
+    
+    const requestBody = {
+        text,
+        temperature
+    };
+
+    // Only add mode and custom_prompt for generate endpoint
+    if (endpoint === '/api/v1/text/generate') {
+        requestBody.mode = mode.toUpperCase();
+        if (custom_prompt) {
+            requestBody.custom_prompt = custom_prompt;
+        }
+    }
+    
+    console.log('Generating text:', { mode, endpoint, ...options });
+    const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Origin': window.location.origin
+        },
+        body: JSON.stringify(requestBody)
+    });
+    
+    console.log('Response status:', response.status);
+    const responseText = await response.text();
+    console.log('Response text:', responseText);
+    
+    if (!response.ok) {
+        let errorMessage;
+        try {
+            const errorData = JSON.parse(responseText);
+            errorMessage = errorData.error || 'Text generation failed';
+        } catch (e) {
+            errorMessage = `Server error (${response.status}): ${responseText}`;
+        }
+        throw new Error(errorMessage);
+    }
+    
+    try {
+        return JSON.parse(responseText);
+    } catch (e) {
+        console.error('Error parsing response:', e);
+        return { text: responseText };
+    }
+}
+
+// Make API functions available globally
+window.api = {
+    uploadAudio,
+    generateText
+};

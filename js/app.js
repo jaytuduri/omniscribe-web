@@ -1,4 +1,4 @@
-import { API_URL, MIME_TYPES } from './config.js';
+import config from './config.js';
 import * as audioRecorder from './audioRecorder.js';
 import * as api from './api.js';
 import * as ui from './uiManager.js';
@@ -50,114 +50,105 @@ function initializeThemeSwitcher() {
         setTheme(nextTheme);
     });
 
+    // Initialize theme
+    setTheme(getCurrentTheme());
+
     // Listen for system theme changes
     systemDarkMode.addEventListener('change', (e) => {
         if (getCurrentTheme() === 'system') {
             document.documentElement.dataset.theme = e.matches ? 'dark' : 'light';
         }
     });
+}
 
-    // Set initial theme
-    setTheme(getCurrentTheme());
+// File Upload Handling
+async function handleFileUpload(file) {
+    if (!config.MIME_TYPES.includes(file.type)) {
+        ui.showTemporaryMessage('Please select a valid audio or video file', true);
+        return;
+    }
+
+    // Show preview immediately after file selection
+    ui.updatePreviewPlayer(URL.createObjectURL(file));
+    ui.showPreviewSection();
+}
+
+// Transcription Handling
+async function handleTranscription(file) {
+    try {
+        ui.showScreen('progressScreen');
+
+        const options = ui.getTranscriptionOptions();
+        const response = await api.uploadAudio(file, options);
+
+        ui.updateTranscriptionText(response.text);
+        ui.showScreen('resultScreen');
+    } catch (error) {
+        console.error('Upload failed:', error);
+        ui.showTemporaryMessage(error.message, true);
+        ui.showScreen('inputScreen');
+    }
 }
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
     initializeThemeSwitcher();
 
-    // Handle record button click
-    document.getElementById('recordButton').addEventListener('click', async () => {
-        if (audioRecorder.getIsRecording()) {
-            // Stop recording
-            await audioRecorder.stopRecording();
+    // File Input Change
+    const fileInput = document.getElementById('fileInput');
+    let currentFile = null;
+
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            currentFile = file;
+            handleFileUpload(file);
+        }
+    });
+
+    // Transcribe Button Click
+    const transcribeButton = document.getElementById('transcribeButton');
+    transcribeButton.addEventListener('click', () => {
+        if (currentFile) {
+            handleTranscription(currentFile);
+        }
+    });
+
+    // Record Button Click
+    const recordButton = document.getElementById('recordButton');
+    recordButton.addEventListener('click', () => {
+        if (audioRecorder.isRecording()) {
+            audioRecorder.stopRecording();
             ui.updateRecordButton(false);
         } else {
-            // Hide preview section when starting new recording
-            ui.hidePreviewSection();
-            
-            try {
-                // Start new recording
-                await audioRecorder.initializeRecording(
-                    MIME_TYPES,
-                    (event) => {
-                        if (event.data.size > 0) {
-                            audioRecorder.getAudioChunks().push(event.data);
-                            console.log('Received audio chunk:', event.data.size, 'bytes');
-                        }
-                    },
-                    async () => {
-                        console.log('Recording stopped, processing audio...');
-                        const chunks = audioRecorder.getAudioChunks();
-                        if (chunks.length > 0) {
-                            const blob = new Blob(chunks, { type: chunks[0].type });
-                            console.log('Created audio blob:', blob.size, 'bytes,', blob.type);
-                            
-                            audioRecorder.setCurrentAudioBlob(blob);
-                            ui.updatePreviewPlayer(URL.createObjectURL(blob));
-                            ui.showPreviewSection();
-                            console.log('Audio preview ready');
-                        } else {
-                            console.error('No audio data recorded');
-                            alert('No audio data was recorded. Please try again.');
-                        }
-                    }
-                );
-                ui.updateRecordButton(true);
-            } catch (error) {
-                alert(error.message);
-                ui.updateRecordButton(false);
-            }
+            audioRecorder.startRecording()
+                .then(() => {
+                    ui.updateRecordButton(true);
+                })
+                .catch(error => {
+                    console.error('Recording failed:', error);
+                    ui.showTemporaryMessage(error.message, true);
+                });
         }
     });
 
-    // Handle transcribe button click
-    document.getElementById('transcribeButton').addEventListener('click', async () => {
-        const currentAudioBlob = audioRecorder.getCurrentAudioBlob();
-        if (currentAudioBlob) {
-            // Create a file with the correct extension based on MIME type
-            let extension = 'webm';
-            if (currentAudioBlob.type.includes('ogg')) {
-                extension = 'ogg';
-            } else if (currentAudioBlob.type.includes('mp4')) {
-                extension = 'mp4';
-            } else if (currentAudioBlob.type.includes('mpeg') || currentAudioBlob.type.includes('mp3')) {
-                extension = 'mp3';
-            }
-            
-            const file = new File([currentAudioBlob], `recording.${extension}`, { type: currentAudioBlob.type });
-            console.log('Sending file for transcription:', file.name, file.type, file.size, 'bytes');
-            
-            try {
-                ui.showScreen('progressScreen');
-                const options = ui.getTranscriptionOptions();
-                const result = await api.uploadAudio(file, API_URL, options);
-                
-                ui.updatePreviewPlayer(URL.createObjectURL(file));
-                const formattedText = ui.formatTranscriptionResult(result, options.responseFormat);
-                ui.updateTranscriptionText(formattedText);
-                ui.showScreen('resultScreen');
-            } catch (error) {
-                console.error('Upload error:', error);
-                alert('Error: ' + error.message);
-                ui.showScreen('inputScreen');
-            }
+    // Audio Recorder Events
+    audioRecorder.onStop(async (blob) => {
+        try {
+            currentFile = new File([blob], 'recording.webm', { type: 'audio/webm' });
+            ui.updatePreviewPlayer(URL.createObjectURL(currentFile));
+            ui.showPreviewSection();
+        } catch (error) {
+            console.error('Recording processing failed:', error);
+            ui.showTemporaryMessage(error.message, true);
         }
     });
 
-    // Handle file upload
-    document.getElementById('fileInput').addEventListener('change', async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        
-        // Show preview for uploaded file
-        ui.updatePreviewPlayer(URL.createObjectURL(file));
-        ui.showPreviewSection();
-        audioRecorder.setCurrentAudioBlob(file);
-    });
-
-    // Handle reset button click
-    document.getElementById('resetButton').addEventListener('click', () => {
+    // Reset Button Click
+    const resetButton = document.getElementById('resetButton');
+    resetButton.addEventListener('click', () => {
+        currentFile = null;
         ui.resetApp();
-        audioRecorder.clearAudioData();
+        ui.showScreen('inputScreen');
     });
 });

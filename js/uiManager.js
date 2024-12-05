@@ -3,8 +3,14 @@ export function showScreen(screenId) {
     document.querySelectorAll('.screen').forEach(screen => {
         screen.classList.remove('active');
     });
+    
     // Show the requested screen
-    document.getElementById(screenId).classList.add('active');
+    const screen = document.getElementById(screenId);
+    if (!screen) {
+        console.error(`Screen with ID "${screenId}" not found`);
+        return;
+    }
+    screen.classList.add('active');
 }
 
 export function updateRecordButton(isRecording) {
@@ -116,11 +122,71 @@ export function resetApp() {
     updateTranscriptionText('');
     updateRecordButton(false);
     clearFileInput();
+    hideGeneratedContent();
 }
 
 export function generateContent(type) {
     // Placeholder function for AI content generation
     alert(`AI ${type} generation coming soon!`);
+}
+
+export function showGeneratedContent(title, content) {
+    const generatedContent = document.getElementById('generatedContent');
+    const generatedTitle = document.getElementById('generatedTitle');
+    const generatedText = document.getElementById('generatedText');
+    
+    generatedTitle.textContent = title;
+    generatedText.textContent = content;
+    generatedContent.style.display = 'block';
+
+    // Setup event listeners
+    document.getElementById('closeGenerated').onclick = hideGeneratedContent;
+    
+    // Copy to clipboard
+    document.getElementById('copyGenerated').onclick = async () => {
+        try {
+            await navigator.clipboard.writeText(content);
+            showTemporaryMessage('Copied to clipboard!');
+        } catch (error) {
+            showTemporaryMessage('Failed to copy to clipboard', true);
+        }
+    };
+    
+    // Download text
+    document.getElementById('downloadGenerated').onclick = () => {
+        const filename = `${title.toLowerCase().replace(/\s+/g, '_')}.txt`;
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
+    
+    // Use generated content
+    document.getElementById('useGenerated').onclick = () => {
+        updateTranscriptionText(content);
+        hideGeneratedContent();
+    };
+}
+
+export function showTemporaryMessage(message, isError = false) {
+    const messageDiv = document.getElementById('errorMessage');
+    messageDiv.textContent = message;
+    messageDiv.style.backgroundColor = isError ? '#ff4444' : '#44b544';
+    messageDiv.style.display = 'block';
+    
+    setTimeout(() => {
+        messageDiv.style.display = 'none';
+    }, 3000);
+}
+
+export function hideGeneratedContent() {
+    const generatedContent = document.getElementById('generatedContent');
+    generatedContent.style.display = 'none';
 }
 
 // Make functions available globally
@@ -136,5 +202,8 @@ window.uiManager = {
     formatTranscriptionResult,
     resetApp,
     downloadTranscription,
-    generateContent
+    generateContent,
+    showGeneratedContent,
+    hideGeneratedContent,
+    showTemporaryMessage
 };

@@ -1,8 +1,7 @@
 let mediaRecorder = null;
 let audioStream = null;
 let audioChunks = [];
-let isRecording = false;
-let currentAudioBlob = null;
+let onStopCallback = null;
 
 export function getSupportedMimeType(mimeTypes) {
     for (const type of mimeTypes) {
@@ -19,6 +18,14 @@ export function stopMediaTracks() {
         audioStream.getTracks().forEach(track => track.stop());
         audioStream = null;
     }
+}
+
+export function isRecording() {
+    return mediaRecorder && mediaRecorder.state === 'recording';
+}
+
+export function onStop(callback) {
+    onStopCallback = callback;
 }
 
 export async function initializeRecording(mimeTypes, onDataAvailable, onRecordingStop) {
@@ -53,7 +60,6 @@ export async function initializeRecording(mimeTypes, onDataAvailable, onRecordin
         audioChunks = [];
         mediaRecorder.start(1000);
         console.log('Recording started');
-        isRecording = true;
         
         return true;
     } catch (error) {
@@ -76,26 +82,51 @@ export async function initializeRecording(mimeTypes, onDataAvailable, onRecordin
     }
 }
 
-export async function stopRecording() {
-    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-        mediaRecorder.stop();
-        mediaRecorder.stream.getTracks().forEach(track => track.stop());
-        isRecording = false;
-        return true;
+export async function startRecording() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+
+        mediaRecorder.addEventListener('dataavailable', event => {
+            if (event.data.size > 0) {
+                audioChunks.push(event.data);
+            }
+        });
+
+        mediaRecorder.addEventListener('stop', () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            const tracks = stream.getTracks();
+            tracks.forEach(track => track.stop());
+            
+            if (onStopCallback) {
+                onStopCallback(audioBlob);
+            }
+        });
+
+        mediaRecorder.start();
+    } catch (error) {
+        console.error('Error starting recording:', error);
+        throw new Error('Could not start recording: ' + (error.message || 'Unknown error'));
     }
-    return false;
+}
+
+export function stopRecording() {
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+    }
 }
 
 export function getIsRecording() {
-    return isRecording;
+    return isRecording();
 }
 
 export function getCurrentAudioBlob() {
-    return currentAudioBlob;
+    return null;
 }
 
 export function setCurrentAudioBlob(blob) {
-    currentAudioBlob = blob;
+    // Not used
 }
 
 export function getAudioChunks() {
@@ -103,8 +134,5 @@ export function getAudioChunks() {
 }
 
 export function clearAudioData() {
-    currentAudioBlob = null;
-    audioChunks = [];
-    stopMediaTracks();
-    isRecording = false;
+    // Not used
 }

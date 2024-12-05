@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Omniscribe Transcription</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Silkscreen&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/ai-generate.css">
+    <title>Omniscribe Transcription</title>
 </head>
 <body>
     <div class="container">
@@ -118,6 +120,25 @@
                 <div id="transcriptionText" class="transcription-content"></div>
                 <button id="showFullTranscription" class="show-more-link">Show Full Transcription</button>
             </div>
+
+            <div id="generatedContent" class="generated-content" style="display: none;">
+                <div class="generated-header">
+                    <h3 id="generatedTitle"></h3>
+                    <button class="button secondary" id="closeGenerated">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div id="generatedText" class="generated-text"></div>
+                <div class="button-container">
+                    <button class="button secondary" id="copyGenerated">
+                        <i class="fas fa-copy"></i> Copy to Clipboard
+                    </button>
+                    <button class="button secondary" id="downloadGenerated">
+                        <i class="fas fa-download"></i> Download as Text
+                    </button>
+                </div>
+            </div>
+
             <div class="button-container action-buttons">
                 <div class="dropdown">
                     <button class="button secondary dropdown-toggle">
@@ -139,21 +160,22 @@
                         <i class="fas fa-robot"></i> OmniGenerate
                     </button>
                     <div class="dropdown-content">
-                        <a href="#" onclick="uiManager.generateContent('summary')">
+                        <a href="#" onclick="aiGenerate.generateContent('summary')">
                             <i class="fas fa-compress-alt"></i> Summary
                         </a>
-                        <a href="#" onclick="uiManager.generateContent('tweet')">
+                        <a href="#" onclick="aiGenerate.generateContent('tweet')">
                             <i class="fab fa-twitter"></i> Tweet Thread
                         </a>
-                        <a href="#" onclick="uiManager.generateContent('blog')">
+                        <a href="#" onclick="aiGenerate.generateContent('blog')">
                             <i class="fas fa-blog"></i> Blog Post
                         </a>
-                        <a href="#" onclick="uiManager.generateContent('custom')">
+                        <a href="#" onclick="aiGenerate.generateContent('custom')">
                             <i class="fas fa-pencil-alt"></i> Custom
                         </a>
                     </div>
                 </div>
             </div>
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
             <div class="button-container">
                 <button id="resetButton" class="button primary">
                     <i class="fas fa-redo"></i> Transcribe Another
@@ -173,5 +195,7 @@
     </footer>
     
     <script type="module" src="js/app.js"></script>
+    <script src="js/aiCleanup.js"></script>
+    <script src="js/aiGenerate.js"></script>
 </body>
 </html>
