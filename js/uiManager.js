@@ -211,12 +211,6 @@ export function showGeneratedContent(title, content) {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
     };
-    
-    // Use generated content
-    document.getElementById('useGenerated').onclick = () => {
-        updateTranscriptionText(content);
-        hideGeneratedContent();
-    };
 }
 
 export function showTemporaryMessage(message, isError = false) {
