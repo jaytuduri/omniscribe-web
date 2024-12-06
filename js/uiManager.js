@@ -229,6 +229,30 @@ export function hideGeneratedContent() {
     generatedContent.style.display = 'none';
 }
 
+export function initializeUI() {
+    initializeTranscriptionOptions();
+}
+
+function initializeTranscriptionOptions() {
+    const toggleButton = document.getElementById('toggleOptions');
+    const optionsSection = document.querySelector('.transcription-options');
+
+    if (toggleButton && optionsSection) {
+        toggleButton.addEventListener('click', () => {
+            toggleButton.classList.toggle('active');
+            optionsSection.classList.toggle('collapsed');
+            
+            // Set a specific height when expanded to enable smooth animation
+            if (!optionsSection.classList.contains('collapsed')) {
+                const height = optionsSection.scrollHeight;
+                optionsSection.style.height = height + 'px';
+            } else {
+                optionsSection.style.height = '0';
+            }
+        });
+    }
+}
+
 // Make functions available globally
 window.uiManager = {
     showScreen,
@@ -237,13 +261,14 @@ window.uiManager = {
     showPreviewSection,
     updatePreviewPlayer,
     updateTranscriptionText,
+    downloadTranscription,
     clearFileInput,
     getTranscriptionOptions,
     formatTranscriptionResult,
     resetApp,
-    downloadTranscription,
     generateContent,
     showGeneratedContent,
     hideGeneratedContent,
-    showTemporaryMessage
+    showTemporaryMessage,
+    initializeUI
 };

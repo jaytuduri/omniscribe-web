@@ -30,10 +30,9 @@
                     <div class="option-icon">
                         <i class="fas fa-file-audio"></i>
                     </div>
-                    <h2>Upload File</h2>
                     <input type="file" id="fileInput" class="file-input" accept="audio/*,video/*">
                     <button class="button primary" onclick="document.getElementById('fileInput').click()">
-                        <i class="fas fa-upload"></i> Choose File
+                        <i class="fas fa-upload"></i> Upload File
                     </button>
                 </div>
                 
@@ -41,7 +40,6 @@
                     <div class="option-icon">
                         <i class="fas fa-microphone"></i>
                     </div>
-                    <h2>Record Audio</h2>
                     <button id="recordButton" class="button secondary">
                         <i class="fas fa-circle"></i> Start Recording
                     </button>
@@ -56,8 +54,12 @@
                     <button id="transcribeButton" class="button primary">
                         <i class="fas fa-wand-magic-sparkles"></i> Transcribe Audio
                     </button>
+                    <button id="toggleOptions" class="button secondary">
+                        <i class="fas fa-cog"></i> Customize Transcription
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
                 </div>
-                <div class="transcription-options">
+                <div class="transcription-options collapsed">
                     <div class="option-group">
                         <label for="language">Language</label>
                         <select id="language" class="input-field">

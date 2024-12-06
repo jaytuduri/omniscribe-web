@@ -48,6 +48,54 @@
     gap: 1.5rem;
 }
 
+.transcription-options {
+    margin-top: 1rem;
+    background: var(--surface-2);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    height: auto;
+}
+
+.transcription-options.collapsed {
+    height: 0;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+}
+
+.transcription-options .option-group {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.transcription-options .option-group:last-child {
+    border-bottom: none;
+}
+
+.transcription-options label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-color-secondary);
+}
+
+.transcription-options select,
+.transcription-options textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background: var(--surface-1);
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+.transcription-options textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
 .transcription-stats {
     color: var(--primary-color);
     font-size: 0.75rem;

@@ -12,6 +12,7 @@
     background-color: var(--button-bg);
     border: 1px solid var(--button-border);
     color: var(--text-color);
+    font-family: 'Silkscreen', cursive;
 }
 
 .button:hover {
@@ -44,4 +45,24 @@
 
 .button i {
     font-size: 1rem;
+}
+
+.input-option .button {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#toggleOptions {
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+    margin-left: 1rem;
+}
+
+#toggleOptions i.fa-chevron-down {
+    transition: transform 0.3s ease;
+}
+
+#toggleOptions.active i.fa-chevron-down {
+    transform: rotate(180deg);
 }

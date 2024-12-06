@@ -93,6 +93,7 @@ async function handleTranscription(file) {
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
     initializeThemeSwitcher();
+    ui.initializeUI();  // Initialize all UI components
 
     // File Input Change
     const fileInput = document.getElementById('fileInput');
