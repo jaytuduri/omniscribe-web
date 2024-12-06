@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Audio Recorder Events
     audioRecorder.onStop(async (blob) => {
         try {
-            currentFile = new File([blob], 'recording.webm', { type: 'audio/webm' });
+            currentFile = new File([blob], 'recording.webm', { type: blob.type });
             ui.updatePreviewPlayer(URL.createObjectURL(currentFile));
             ui.showPreviewSection();
         } catch (error) {

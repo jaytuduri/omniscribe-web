@@ -2,6 +2,7 @@ let mediaRecorder = null;
 let audioStream = null;
 let audioChunks = [];
 let onStopCallback = null;
+let currentMimeType = null;
 
 export function getSupportedMimeType(mimeTypes) {
     for (const type of mimeTypes) {
@@ -85,7 +86,15 @@ export async function initializeRecording(mimeTypes, onDataAvailable, onRecordin
 export async function startRecording() {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
+        
+        // Get supported MIME type from config
+        const mimeTypes = (await import('./config.js')).default.MIME_TYPES;
+        currentMimeType = getSupportedMimeType(mimeTypes);
+        
+        mediaRecorder = new MediaRecorder(stream, {
+            mimeType: currentMimeType,
+            audioBitsPerSecond: 128000
+        });
         audioChunks = [];
 
         mediaRecorder.addEventListener('dataavailable', event => {
@@ -95,7 +104,7 @@ export async function startRecording() {
         });
 
         mediaRecorder.addEventListener('stop', () => {
-            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            const audioBlob = new Blob(audioChunks, { type: currentMimeType });
             const tracks = stream.getTracks();
             tracks.forEach(track => track.stop());
             
