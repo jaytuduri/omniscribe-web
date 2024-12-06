@@ -588,6 +588,29 @@ audio {
     display: block;
 }
 
+.pixel-font {
+    font-family: 'Silkscreen', cursive;
+    text-transform: lowercase;
+    letter-spacing: 0.05em;
+    color: var(--text-color);
+}
+
+#progressScreen {
+    text-align: center;
+    padding: 3rem 2rem;
+}
+
+#progressMessage {
+    margin-top: 2.5rem;
+    animation: fadeInOut 1s infinite;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+}
+
 @media (min-width: 640px) {
     .input-screen {
         display: grid;

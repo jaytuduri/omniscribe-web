@@ -1,3 +1,18 @@
+const funnyMessages = [
+    "analyzing those sweet soundwaves",
+    "decoding your audio mysteries",
+    "teaching robots to understand humans",
+    "converting beeps to words",
+    "doing some audio magic",
+    "turning sounds into letters",
+    "making sense of the noise",
+    "translating human speak",
+    "processing audio vibes",
+    "doing the transcription dance"
+];
+
+let messageInterval;
+
 export function showScreen(screenId) {
     // Hide all screens
     document.querySelectorAll('.screen').forEach(screen => {
@@ -11,6 +26,37 @@ export function showScreen(screenId) {
         return;
     }
     screen.classList.add('active');
+
+    // Handle progress screen messages
+    if (screenId === 'progressScreen') {
+        startRotatingMessages();
+    } else {
+        stopRotatingMessages();
+    }
+}
+
+function startRotatingMessages() {
+    const progressMessage = document.getElementById('progressMessage');
+    let messageIndex = 0;
+
+    // Clear any existing interval
+    stopRotatingMessages();
+
+    // Immediately show first message
+    progressMessage.textContent = funnyMessages[messageIndex];
+
+    // Start rotating messages
+    messageInterval = setInterval(() => {
+        messageIndex = (messageIndex + 1) % funnyMessages.length;
+        progressMessage.textContent = funnyMessages[messageIndex];
+    }, 3000); // Change message every 3 seconds
+}
+
+function stopRotatingMessages() {
+    if (messageInterval) {
+        clearInterval(messageInterval);
+        messageInterval = null;
+    }
 }
 
 export function updateRecordButton(isRecording) {
