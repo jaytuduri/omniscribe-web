@@ -1,0 +1,31 @@
+.theme-switcher {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 1000;
+}
+
+.theme-switcher button,
+#themeToggle {
+    background: none;
+    border: none;
+    padding: 0.25rem;
+    cursor: pointer;
+    color: var(--text-color);
+    font-size: 1.2rem;
+    transition: opacity 0.3s ease;
+}
+
+.theme-switcher button:hover,
+#themeToggle:hover {
+    opacity: 0.8;
+}
+
+.theme-switcher button.active {
+    opacity: 1;
+    color: var(--gradient-start);
+}
+
+#themeToggle {
+    float: right;
+}

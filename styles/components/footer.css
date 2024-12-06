@@ -1,0 +1,28 @@
+.footer {
+    margin-top: 3rem;
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--secondary-color);
+}
+
+.footer a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    margin: 0 0.5rem;
+}
+
+.footer a:hover {
+    color: var(--primary-color);
+}
+
+.footer i {
+    font-size: 1rem;
+    vertical-align: middle;
+}
+
+.footer-separator {
+    margin: 0 0.5rem;
+    opacity: 0.5;
+}

@@ -1,0 +1,107 @@
+.input-option {
+    flex: 1;
+    text-align: center;
+    background-color: var(--background-color);
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 300px;
+}
+
+.input-option h2 {
+    color: var(--text-color);
+    margin: 1rem 0;
+}
+
+.input-option .option-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--accent-color);
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.upload-info {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin: -0.5rem 0 1rem;
+}
+
+.option-icon {
+    font-size: 2rem;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+.input-field {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    font-family: inherit;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 0;
+    font-size: 0.9rem;
+    position: relative;
+    transition: border-color 0.2s ease;
+}
+
+.input-field::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 1px solid var(--border-color);
+    clip-path: polygon(
+        0 2px, 2px 2px, 2px 0,
+        calc(100% - 2px) 0, calc(100% - 2px) 2px, 100% 2px,
+        100% calc(100% - 2px), calc(100% - 2px) calc(100% - 2px), calc(100% - 2px) 100%,
+        2px 100%, 2px calc(100% - 2px), 0 calc(100% - 2px)
+    );
+    pointer-events: none;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+select.input-field {
+    appearance: none;
+    padding-right: 2rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234a4a4a'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1.5rem;
+}
+
+textarea.input-field {
+    min-height: 5rem;
+    resize: vertical;
+}
+
+.file-input {
+    display: none;
+}
+
+audio {
+    width: 100%;
+    margin: 1rem 0;
+}
+
+.option-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.option-group label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-color);
+}

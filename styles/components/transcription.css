@@ -1,0 +1,97 @@
+.transcription {
+    position: relative;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 1rem;
+    margin: 1rem 0;
+    color: var(--text-color);
+    min-height: 200px;
+}
+
+.word-count {
+    position: absolute;
+    top: 0.75rem;
+    right: 1rem;
+    font-size: 0.8rem;
+    color: var(--gradient-start);
+    padding: 0.25rem 0.75rem;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+.word-count i {
+    margin-right: 0.35rem;
+}
+
+.transcription-content {
+    color: var(--text-color);
+    white-space: pre-wrap;
+    padding-top: 2.5rem;
+}
+
+#transcriptionText {
+    color: var(--text-color);
+    white-space: pre-wrap;
+}
+
+#transcriptionStats {
+    color: var(--primary-color);
+    font-size: 0.75rem;
+    text-align: right;
+    margin-bottom: 0.5rem;
+    opacity: 0.9;
+}
+
+.transcription-options {
+    margin: 2rem 0;
+    display: grid;
+    gap: 1.5rem;
+}
+
+.transcription-stats {
+    color: var(--primary-color);
+    font-size: 0.75rem;
+    text-align: right;
+    margin-bottom: 0.5rem;
+    opacity: 0.9;
+}
+
+.transcription-stats span {
+    color: inherit;
+}
+
+.transcription-stats strong {
+    font-weight: 500;
+    color: inherit;
+}
+
+.transcription-text {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.download-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.download-buttons .button {
+    flex: 1;
+}
+
+#progressMessage {
+    margin-top: 2.5rem;
+    animation: fadeInOut 1s infinite;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+}

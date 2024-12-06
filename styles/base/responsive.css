@@ -1,0 +1,14 @@
+@media (min-width: 640px) {
+    .input-screen {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    body {
+        padding: 2rem;
+    }
+    
+    .container {
+        padding: 2rem;
+    }
+}

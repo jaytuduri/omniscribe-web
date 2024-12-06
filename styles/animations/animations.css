@@ -1,0 +1,46 @@
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.screen {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.screen.active {
+    display: block;
+}
+
+.button i.recording {
+    color: #ff4444;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.show-more-link {
+    background: none;
+    border: none;
+    color: var(--gradient-start);
+    font-size: 0.85rem;
+    padding: 0.5rem 0;
+    cursor: pointer;
+    display: none;
+    width: 100%;
+    text-align: center;
+    margin-top: 0.5rem;
+    transition: opacity 0.2s ease;
+}
+
+.show-more-link:hover {
+    opacity: 0.8;
+}
+
+.show-more-link.visible {
+    display: block;
+}
