@@ -12,6 +12,9 @@ A modern web application for transcribing audio and video files using a clean, i
 - **Real-time Preview**
   - Preview audio before transcription
   - Supports multiple audio formats
+- **AI-Powered Processing**
+  - Advanced audio transcription
+  - AI-assisted text cleanup and formatting
 - **Modern UI**
   - Clean, responsive design
   - Progress indicators
@@ -20,7 +23,7 @@ A modern web application for transcribing audio and video files using a clean, i
 ## Technical Details
 
 - Pure HTML, CSS, and JavaScript implementation
-- No external dependencies required
+- Modular JavaScript architecture
 - Uses modern Web APIs:
   - MediaRecorder API for audio recording
   - Web Audio API for audio processing
@@ -45,14 +48,32 @@ A modern web application for transcribing audio and video files using a clean, i
 
 ```
 omniscribe-web/
-├── index.html      # Main HTML file
+├── index.html          # Main HTML file
+├── css/               # Stylesheet directory
 ├── styles/
-│   └── main.css    # Styles
-└── js/
-    └── app.js      # Application logic
+│   └── main.css       # Main styles
+├── js/
+│   ├── aiCleanup.js   # AI text cleanup functionality
+│   ├── aiGenerate.js  # AI generation features
+│   ├── api.js         # API interaction handlers
+│   └── config.js      # Configuration settings
+└── docs/              # Documentation directory
 ```
+
+## Core Components
+
+- **AI Processing Modules**
+  - `aiGenerate.js`: Handles AI-powered text generation
+  - `aiCleanup.js`: Manages text cleanup and formatting
+- **API Integration**
+  - `api.js`: Manages all API interactions
+  - `config.js`: Contains configuration and API settings
 
 ## API Endpoint
 
 The application uses the Omniscribe API endpoint:
 `https://omniscribe-production.up.railway.app/api/v1/audio/transcriptions`
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
