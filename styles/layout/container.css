@@ -18,7 +18,7 @@
 
 .input-screen {
     display: flex;
-    gap: 2rem;
+    gap: 1.5rem;
     justify-content: center;
     margin: 2rem 0;
 }
