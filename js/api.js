@@ -60,7 +60,7 @@ export async function generateText(text, mode, options = {}) {
 
     // Only add mode and custom_prompt for generate endpoint
     if (endpoint === '/api/v1/text/generate') {
-        requestBody.mode = mode.toUpperCase();
+        requestBody.mode = mode.toLowerCase();
         if (custom_prompt) {
             requestBody.custom_prompt = custom_prompt;
         }

@@ -30,6 +30,11 @@ Key Changes:
    - Better file type validation
    - Improved file preview handling
 
+5. Text Generation Mode Fixes
+   - Fix mode parameter case in API calls (convert to lowercase)
+   - Update blog mode to blog_post to match API expectations
+   - Ensure consistent mode values across frontend and API
+
 File Details:
 
 config.js:

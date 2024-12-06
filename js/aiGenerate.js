@@ -9,7 +9,7 @@ class AIGenerate {
                 name: 'Tweet Thread',
                 icon: 'fab fa-twitter'
             },
-            blog: {
+            blog_post: {
                 name: 'Blog Post',
                 icon: 'fas fa-blog'
             },
