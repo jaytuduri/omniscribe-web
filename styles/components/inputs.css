@@ -101,7 +101,9 @@ audio {
 }
 
 .option-group label {
-    font-size: 0.9rem;
-    font-weight: 500;
+    font-family: 'Silkscreen', cursive;
+    font-size: 0.8rem;
     color: var(--text-color);
+    text-transform: lowercase;
+    letter-spacing: 0.05em;
 }
