@@ -149,3 +149,38 @@
     50% { opacity: 1; }
     100% { opacity: 0.5; }
 }
+
+.generated-content {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-secondary);
+}
+
+.generated-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.generated-header h3 {
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.generated-text {
+    margin: 1rem 0;
+    padding: 1rem;
+    background-color: var(--bg-primary);
+    border-radius: 4px;
+    white-space: pre-wrap;
+    line-height: 1.5;
+}
+
+.generated-content .button-container {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
