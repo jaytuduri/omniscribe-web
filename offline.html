@@ -3,34 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Silkscreen&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles/main.css">
     <title>OmniScribe - Offline</title>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
+        .offline-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            margin: 0;
             padding: 20px;
             text-align: center;
-            background-color: #f5f5f5;
         }
-        .offline-container {
+        .offline-content {
             max-width: 600px;
             padding: 40px;
-            background: white;
+            background: var(--surface-color);
             border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-        p {
-            color: #666;
-            line-height: 1.6;
+            box-shadow: var(--shadow);
         }
         .icon {
             font-size: 48px;
@@ -40,23 +34,37 @@
             margin-top: 20px;
             padding: 10px 20px;
             border: none;
-            background-color: #007bff;
-            color: white;
+            background-color: var(--primary-color);
+            color: var(--text-on-primary);
             border-radius: 6px;
             cursor: pointer;
             transition: background-color 0.3s;
         }
         .retry-button:hover {
-            background-color: #0056b3;
+            background-color: var(--primary-color-dark);
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+        p {
+            color: var(--text-secondary);
+            line-height: 1.6;
         }
     </style>
 </head>
 <body>
     <div class="offline-container">
-        <div class="icon">📡</div>
-        <h1>You're Offline</h1>
-        <p>It seems you've lost your internet connection. Don't worry - any transcriptions you've already started are safely stored and will sync when you're back online.</p>
-        <button class="retry-button" onclick="window.location.reload()">Try Again</button>
+        <div class="offline-content">
+            <div class="icon">
+                <i class="fas fa-wifi-slash"></i>
+            </div>
+            <h1>You're Offline</h1>
+            <p>It seems you've lost your internet connection. Don't worry - any transcriptions you've already started are safely stored and will sync when you're back online.</p>
+            <button class="retry-button" onclick="window.location.reload()">
+                <i class="fas fa-sync-alt"></i> Try Again
+            </button>
+        </div>
     </div>
 </body>
 </html>
