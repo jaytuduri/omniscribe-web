@@ -1,4 +1,4 @@
-class AIGenerate {
+export class AIGenerate {
     constructor() {
         this.modes = {
             summary: {
@@ -18,64 +18,31 @@ class AIGenerate {
                 icon: 'fas fa-pencil-alt'
             }
         };
+        // Wait a bit before setting up event listeners to ensure DOM is ready
+        setTimeout(() => this.setupEventListeners(), 0);
     }
 
-    async generateContent(mode) {
-        try {
-            const transcriptionText = document.getElementById('transcriptionText');
-            const text = transcriptionText.dataset.fullText;
-            
-            if (!text || !text.trim()) {
-                throw new Error('No text to generate from');
+    setupEventListeners() {
+        // Add event listeners for generate buttons
+        const buttons = [
+            { id: 'generateSummaryBtn', mode: 'summary' },
+            { id: 'generateTweetBtn', mode: 'tweet' },
+            { id: 'generateBlogPostBtn', mode: 'blog_post' },
+            { id: 'generateCustomBtn', mode: 'custom' }
+        ];
+
+        buttons.forEach(({ id, mode }) => {
+            const button = document.getElementById(id);
+            if (button) {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.generateContent(mode);
+                });
+                console.log(`✅ ${this.modes[mode].name} button handler attached`);
+            } else {
+                console.warn(`⚠️ ${this.modes[mode].name} button not found`);
             }
-
-            // Show loading state in dropdown
-            const linkElement = document.querySelector(`[onclick="aiGenerate.generateContent('${mode}')"]`);
-            const originalHTML = linkElement.innerHTML;
-            linkElement.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Generating...`;
-            linkElement.style.pointerEvents = 'none';
-
-            let options = { temperature: 0.7 };
-
-            // Handle custom prompt if mode is custom
-            if (mode === 'custom') {
-                const customPrompt = await this.getCustomPrompt();
-                if (!customPrompt) {
-                    linkElement.innerHTML = originalHTML;
-                    linkElement.style.pointerEvents = 'auto';
-                    return;
-                }
-                options.custom_prompt = customPrompt;
-            }
-
-            const result = await window.api.generateText(text, mode, options);
-            
-            window.uiManager.showGeneratedContent(
-                `${this.modes[mode].name} Result`, 
-                result.text
-            );
-
-            // Reset link state
-            linkElement.innerHTML = originalHTML;
-            linkElement.style.pointerEvents = 'auto';
-
-        } catch (error) {
-            console.error('Error in AI generation:', error);
-            // Show error in UI
-            const errorDiv = document.getElementById('errorMessage');
-            errorDiv.textContent = `Error: ${error.message}`;
-            errorDiv.style.display = 'block';
-
-            // Reset link state
-            const linkElement = document.querySelector(`[onclick="aiGenerate.generateContent('${mode}')"]`);
-            linkElement.innerHTML = `<i class="${this.modes[mode].icon}"></i> ${this.modes[mode].name}`;
-            linkElement.style.pointerEvents = 'auto';
-
-            // Remove error message after 5 seconds
-            setTimeout(() => {
-                errorDiv.style.display = 'none';
-            }, 5000);
-        }
+        });
     }
 
     async getCustomPrompt() {
@@ -112,9 +79,50 @@ class AIGenerate {
             textarea.focus();
         });
     }
-}
 
-// Initialize AI Generate
-document.addEventListener('DOMContentLoaded', () => {
-    window.aiGenerate = new AIGenerate();
-});
+    async generateContent(mode) {
+        try {
+            const transcriptionText = document.getElementById('transcriptionText');
+            if (!transcriptionText) {
+                throw new Error('Transcription text element not found');
+            }
+            
+            const text = transcriptionText.dataset.fullText;
+            if (!text || !text.trim()) {
+                throw new Error('No text to generate from');
+            }
+
+            // Show loading state in button
+            const button = document.getElementById(`generate${mode.charAt(0).toUpperCase() + mode.slice(1)}Btn`);
+            if (!button) {
+                throw new Error(`Generate ${mode} button not found`);
+            }
+
+            const originalHTML = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+            button.disabled = true;
+
+            try {
+                let options = { temperature: 0.7 };
+
+                // Handle custom prompt if mode is custom
+                if (mode === 'custom') {
+                    const customPrompt = await this.getCustomPrompt();
+                    if (!customPrompt) {
+                        return;
+                    }
+                    options.custom_prompt = customPrompt;
+                }
+
+                const result = await window.api.generateText(text, mode.toUpperCase(), options);
+                window.uiManager.showGeneratedContent(`${this.modes[mode].name} Result`, result.text);
+            } finally {
+                button.innerHTML = originalHTML;
+                button.disabled = false;
+            }
+        } catch (error) {
+            console.error('Error in AI generate:', error);
+            window.uiManager.showTemporaryMessage(`Error: ${error.message}`, true);
+        }
+    }
+}
