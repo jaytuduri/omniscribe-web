@@ -17,34 +17,48 @@ export async function uploadAudio(file, options = {}) {
     }
     
     console.log('Uploading file:', file.name, 'Size:', file.size, 'Type:', file.type);
-    const response = await fetch(config.API_BASE_URL + '/api/v1/audio/transcriptions', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-        },
-        body: formData
-    });
-    
-    console.log('Response status:', response.status);
-    const responseText = await response.text();
-    console.log('Response text:', responseText);
-    
-    if (!response.ok) {
-        let errorMessage;
-        try {
-            const errorData = JSON.parse(responseText);
-            errorMessage = errorData.error || 'Transcription failed';
-        } catch (e) {
-            errorMessage = `Server error (${response.status}): ${responseText}`;
-        }
-        throw new Error(errorMessage);
-    }
     
     try {
-        return responseFormat === 'text' ? { text: responseText } : JSON.parse(responseText);
-    } catch (e) {
-        console.error('Error parsing response:', e);
-        return { text: responseText };
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 60000); // 1 minute timeout
+        
+        const response = await fetch(config.API_BASE_URL + '/api/v1/audio/transcriptions', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+            },
+            body: formData,
+            signal: controller.signal
+        });
+        
+        clearTimeout(timeout);
+        
+        console.log('Response status:', response.status);
+        const responseText = await response.text();
+        console.log('Response text:', responseText);
+        
+        if (!response.ok) {
+            let errorMessage;
+            try {
+                const errorData = JSON.parse(responseText);
+                errorMessage = errorData.error || 'Transcription failed';
+            } catch (e) {
+                errorMessage = `Server error (${response.status}): ${responseText}`;
+            }
+            throw new Error(errorMessage);
+        }
+        
+        try {
+            return responseFormat === 'text' ? { text: responseText } : JSON.parse(responseText);
+        } catch (e) {
+            console.error('Error parsing response:', e);
+            return { text: responseText };
+        }
+    } catch (error) {
+        if (error.name === 'AbortError') {
+            throw new Error('Request timed out. The file might be too large or the server is taking too long to respond.');
+        }
+        throw error;
     }
 }
 

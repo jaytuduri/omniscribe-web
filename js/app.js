@@ -66,12 +66,13 @@ function initializeThemeSwitcher() {
 async function handleFileUpload(file) {
     if (!config.MIME_TYPES.includes(file.type)) {
         ui.showTemporaryMessage('Please select a valid audio or video file', true);
-        return;
+        return false;
     }
 
     // Show preview immediately after file selection
     ui.updatePreviewPlayer(URL.createObjectURL(file));
     ui.showPreviewSection();
+    return true;
 }
 
 // Transcription Handling
@@ -79,18 +80,18 @@ async function handleTranscription(file) {
     try {
         ui.showScreen('progressScreen');
         const options = ui.getTranscriptionOptions();
-        const result = await api.transcribe(file, options);
+        const result = await api.uploadAudio(file, options);
         const formattedResult = ui.formatTranscriptionResult(result, options.responseFormat);
         ui.updateTranscriptionText(formattedResult);
         
         // Save the transcription
         transcriptionManager.saveTranscription(formattedResult, options);
         
-        ui.showScreen('mainScreen');
+        ui.showScreen('resultScreen');
     } catch (error) {
         console.error('Transcription error:', error);
         ui.showTemporaryMessage('Error during transcription. Please try again.', true);
-        ui.showScreen('mainScreen');
+        ui.showScreen('inputScreen');
     }
 }
 
@@ -145,7 +146,7 @@ function updateRecentTranscriptions() {
             if (transcription) {
                 console.log('📋 Loading transcription into main view');
                 ui.updateTranscriptionText(transcription.text);
-                ui.showScreen('mainScreen');
+                ui.showScreen('resultScreen');
             } else {
                 console.error('❌ Failed to load transcription:', id);
             }
@@ -201,11 +202,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById('fileInput');
     let currentFile = null;
 
-    fileInput.addEventListener('change', (e) => {
+    fileInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (file) {
-            currentFile = file;
-            handleFileUpload(file);
+            const success = await handleFileUpload(file);
+            if (success) {
+                currentFile = file;
+            }
         }
     });
 

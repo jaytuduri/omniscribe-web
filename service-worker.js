@@ -49,10 +49,14 @@ self.addEventListener('activate', (event) => {
 
 // Helper function to handle network requests with timeout
 const timeoutFetch = (request, timeout = 5000) => {
+  // Use a longer timeout for API requests
+  if (request.url.includes('/api/')) {
+    timeout = 60000; // 1 minute for API requests
+  }
   return Promise.race([
     fetch(request),
     new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Timeout')), timeout)
+      setTimeout(() => reject(new Error('Request timed out')), timeout)
     )
   ]);
 };
@@ -70,13 +74,19 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // For all other requests, use stale-while-revalidate
+  // Skip caching for non-GET requests
+  if (request.method !== 'GET') {
+    event.respondWith(timeoutFetch(request));
+    return;
+  }
+
+  // For GET requests, use stale-while-revalidate
   event.respondWith(
     caches.match(request)
       .then(cachedResponse => {
         const fetchPromise = timeoutFetch(request)
           .then(networkResponse => {
-            // Cache successful responses in dynamic cache
+            // Cache successful GET responses in dynamic cache
             if (networkResponse.ok) {
               const responseToCache = networkResponse.clone();
               caches.open(DYNAMIC_CACHE)
@@ -91,7 +101,7 @@ self.addEventListener('fetch', (event) => {
               return caches.match('/icons/icon-192x192.png');
             }
             // For API requests, return a JSON error
-            if (request.destination === '') {
+            if (request.url.includes('/api/')) {
               return new Response(
                 JSON.stringify({ error: 'Network error' }),
                 { 
@@ -103,7 +113,6 @@ self.addEventListener('fetch', (event) => {
             throw error;
           });
 
-        // Return cached response immediately if available
         return cachedResponse || fetchPromise;
       })
   );
