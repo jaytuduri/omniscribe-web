@@ -1,60 +1,52 @@
-class AICleanup {
+export class AICleanup {
     constructor() {
-        this.setupEventListeners();
+        // Wait a bit before setting up event listeners to ensure DOM is ready
+        setTimeout(() => this.setupEventListeners(), 0);
     }
 
     setupEventListeners() {
         const cleanupButton = document.getElementById('aiCleanupButton');
         if (cleanupButton) {
             cleanupButton.addEventListener('click', () => this.performCleanup());
+            console.log('✅ AI Cleanup button handler attached');
+        } else {
+            console.warn('⚠️ AI Cleanup button not found');
         }
     }
 
     async performCleanup() {
         try {
             const transcriptionText = document.getElementById('transcriptionText');
-            const text = transcriptionText.dataset.fullText;
+            if (!transcriptionText) {
+                throw new Error('Transcription text element not found');
+            }
             
+            const text = transcriptionText.dataset.fullText;
             if (!text || !text.trim()) {
                 throw new Error('No text to clean up');
             }
 
             // Show loading state
             const cleanupButton = document.getElementById('aiCleanupButton');
+            if (!cleanupButton) {
+                throw new Error('Cleanup button not found');
+            }
+
             const originalText = cleanupButton.innerHTML;
             cleanupButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cleaning...';
             cleanupButton.disabled = true;
 
-            const result = await window.api.generateText(text, 'CLEANUP');
-            
-            // Show generated content
-            window.uiManager.showGeneratedContent('AI Cleanup Result', result.text);
-
-            // Reset button state
-            cleanupButton.innerHTML = originalText;
-            cleanupButton.disabled = false;
-
+            try {
+                const result = await window.api.generateText(text, 'CLEANUP');
+                window.uiManager.showGeneratedContent('AI Cleanup Result', result.text);
+            } finally {
+                // Reset button state
+                cleanupButton.innerHTML = originalText;
+                cleanupButton.disabled = false;
+            }
         } catch (error) {
             console.error('Error in AI cleanup:', error);
-            // Show error in UI
-            const errorDiv = document.getElementById('errorMessage');
-            errorDiv.textContent = `Error: ${error.message}`;
-            errorDiv.style.display = 'block';
-            
-            // Reset button state
-            const cleanupButton = document.getElementById('aiCleanupButton');
-            cleanupButton.innerHTML = '<i class="fas fa-magic"></i> AI Cleanup';
-            cleanupButton.disabled = false;
-
-            // Remove error message after 5 seconds
-            setTimeout(() => {
-                errorDiv.style.display = 'none';
-            }, 5000);
+            window.uiManager.showTemporaryMessage(`Error: ${error.message}`, true);
         }
     }
 }
-
-// Initialize AI Cleanup
-document.addEventListener('DOMContentLoaded', () => {
-    window.aiCleanup = new AICleanup();
-});

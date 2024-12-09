@@ -3,6 +3,8 @@ import * as audioRecorder from './audioRecorder.js';
 import * as api from './api.js';
 import * as ui from './uiManager.js';
 import * as transcriptionManager from './transcriptionManager.js';
+import { AICleanup } from './aiCleanup.js';
+import { AIGenerate } from './aiGenerate.js';
 
 // Theme Switcher
 function initializeThemeSwitcher() {
@@ -167,14 +169,23 @@ function handleClearHistory() {
 }
 
 // Event Listeners
-window.addEventListener('componentsLoaded', () => {
+window.addEventListener('componentsLoaded', async () => {
     console.log('🚀 Initializing application');
+    
+    // Initialize core features
     initializeThemeSwitcher();
     ui.initializeUI();
     
     // Initialize recent transcriptions
     console.log('📋 Initializing recent transcriptions');
     updateRecentTranscriptions();
+    
+    // Initialize AI features after a small delay to ensure DOM is ready
+    setTimeout(() => {
+        console.log('🤖 Initializing AI features');
+        window.aiCleanup = new AICleanup();
+        window.aiGenerate = new AIGenerate();
+    }, 100);
     
     // Add event listeners for result screen buttons
     const downloadTxtBtn = document.getElementById('downloadTxtBtn');
