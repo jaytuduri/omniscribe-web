@@ -2,20 +2,20 @@
 const CACHE_VERSION = 'v3';
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `dynamic-${CACHE_VERSION}`;
-const OFFLINE_PAGE = '/offline.html';
+const OFFLINE_PAGE = './offline.html';
 
 // Static assets to cache on install
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/offline.html',
-  '/manifest.json',
-  '/styles/main.css',
-  '/styles/components/modal.css',
-  '/styles/components/inputs.css',
-  '/styles/components/notifications.css',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png',
+  './',
+  './index.html',
+  './offline.html',
+  './manifest.json',
+  './styles/main.css',
+  './styles/components/modal.css',
+  './styles/components/inputs.css',
+  './styles/components/notifications.css',
+  './icons/icon-192x192.png',
+  './icons/icon-512x512.png',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Silkscreen&display=swap',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
@@ -98,7 +98,7 @@ self.addEventListener('fetch', (event) => {
             console.log('Fetch failed:', error);
             // If it's an image, return a default offline image
             if (request.destination === 'image') {
-              return caches.match('/icons/icon-192x192.png');
+              return caches.match('./icons/icon-192x192.png');
             }
             // For API requests, return a JSON error
             if (request.url.includes('/api/')) {
