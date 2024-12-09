@@ -167,7 +167,7 @@ function handleClearHistory() {
 }
 
 // Event Listeners
-document.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('componentsLoaded', () => {
     console.log('🚀 Initializing application');
     initializeThemeSwitcher();
     ui.initializeUI();
@@ -176,6 +176,39 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('📋 Initializing recent transcriptions');
     updateRecentTranscriptions();
     
+    // Add event listeners for result screen buttons
+    const downloadTxtBtn = document.getElementById('downloadTxtBtn');
+    if (downloadTxtBtn) {
+        downloadTxtBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            ui.downloadTranscription('txt');
+        });
+    }
+
+    const generateSummaryBtn = document.getElementById('generateSummaryBtn');
+    if (generateSummaryBtn) {
+        generateSummaryBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            ui.generateContent('summary');
+        });
+    }
+
+    const generateNotesBtn = document.getElementById('generateNotesBtn');
+    if (generateNotesBtn) {
+        generateNotesBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            ui.generateContent('notes');
+        });
+    }
+
+    const generateActionItemsBtn = document.getElementById('generateActionItemsBtn');
+    if (generateActionItemsBtn) {
+        generateActionItemsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            ui.generateContent('action-items');
+        });
+    }
+
     // Add clear history button handler
     const clearHistoryBtn = document.getElementById('clearHistoryBtn');
     if (clearHistoryBtn) {

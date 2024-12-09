@@ -1,0 +1,61 @@
+<div class="screen" id="resultScreen">
+    <h2>Transcription Result</h2>
+    <audio id="audioPlayer" controls></audio>
+    <div class="transcription">
+        <div id="transcriptionStats" class="word-count"></div>
+        <div id="transcriptionText" class="transcription-content"></div>
+        <button id="showFullTranscription" class="show-more-link">Show Full Transcription</button>
+    </div>
+
+    <div id="generatedContent" class="generated-content" style="display: none;">
+        <div class="generated-header">
+            <h3 id="generatedTitle"></h3>
+            <button class="button secondary" id="closeGenerated">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="generatedText" class="generated-text"></div>
+        <div class="button-container">
+            <button class="button secondary" id="copyGenerated">
+                <i class="fas fa-copy"></i> Copy to Clipboard
+            </button>
+            <button class="button secondary" id="downloadGenerated">
+                <i class="fas fa-download"></i> Download as Text
+            </button>
+        </div>
+    </div>
+
+    <div class="button-container action-buttons">
+        <div class="dropdown">
+            <button class="button secondary dropdown-toggle">
+                <i class="fas fa-download"></i> Download
+            </button>
+            <div class="dropdown-content">
+                <a href="#" id="downloadTxtBtn">
+                    <i class="fas fa-file-alt"></i> Text File (.txt)
+                </a>
+            </div>
+        </div>
+
+        <button class="button secondary" id="aiCleanupButton">
+            <i class="fas fa-magic"></i> AI Cleanup
+        </button>
+
+        <div class="dropdown">
+            <button class="button secondary dropdown-toggle">
+                <i class="fas fa-robot"></i> OmniGenerate
+            </button>
+            <div class="dropdown-content">
+                <a href="#" id="generateSummaryBtn">
+                    <i class="fas fa-list"></i> Summary
+                </a>
+                <a href="#" id="generateNotesBtn">
+                    <i class="fas fa-sticky-note"></i> Notes
+                </a>
+                <a href="#" id="generateActionItemsBtn">
+                    <i class="fas fa-tasks"></i> Action Items
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
