@@ -25,8 +25,16 @@ export class ComponentLoader {
             await this.loadComponent(component.id, component.path);
         }
         
-        // Dispatch event when all components are loaded
-        window.dispatchEvent(new Event('componentsLoaded'));
+        // Give the browser a moment to parse the new DOM elements
+        await new Promise(resolve => {
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    // Dispatch event when all components are loaded and DOM is ready
+                    window.dispatchEvent(new Event('componentsLoaded'));
+                    resolve();
+                });
+            });
+        });
     }
 }
 

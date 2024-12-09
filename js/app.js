@@ -180,45 +180,58 @@ window.addEventListener('componentsLoaded', async () => {
     console.log('📋 Initializing recent transcriptions');
     updateRecentTranscriptions();
     
-    // Initialize AI features after a small delay to ensure DOM is ready
-    setTimeout(() => {
-        console.log('🤖 Initializing AI features');
-        window.aiCleanup = new AICleanup();
-        window.aiGenerate = new AIGenerate();
-    }, 100);
+    // Initialize AI features
+    console.log('🤖 Initializing AI features');
+    window.aiCleanup = new AICleanup();
+    window.aiGenerate = new AIGenerate();
+    window.aiGenerate.initialize();
     
     // Add event listeners for result screen buttons
-    const downloadTxtBtn = document.getElementById('downloadTxtBtn');
-    if (downloadTxtBtn) {
-        downloadTxtBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            ui.downloadTranscription('txt');
-        });
-    }
+    const setupResultScreenButtons = () => {
+        const downloadTxtBtn = document.getElementById('downloadTxtBtn');
+        if (downloadTxtBtn) {
+            downloadTxtBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                ui.downloadTranscription('txt');
+            });
+        }
 
-    const generateSummaryBtn = document.getElementById('generateSummaryBtn');
-    if (generateSummaryBtn) {
-        generateSummaryBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            ui.generateContent('summary');
-        });
-    }
+        const generateSummaryBtn = document.getElementById('generateSummaryBtn');
+        if (generateSummaryBtn) {
+            generateSummaryBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                ui.generateContent('summary');
+            });
+        }
 
-    const generateNotesBtn = document.getElementById('generateNotesBtn');
-    if (generateNotesBtn) {
-        generateNotesBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            ui.generateContent('notes');
-        });
-    }
+        const generateNotesBtn = document.getElementById('generateNotesBtn');
+        if (generateNotesBtn) {
+            generateNotesBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                ui.generateContent('notes');
+            });
+        }
 
-    const generateActionItemsBtn = document.getElementById('generateActionItemsBtn');
-    if (generateActionItemsBtn) {
-        generateActionItemsBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            ui.generateContent('action-items');
-        });
-    }
+        const generateActionItemsBtn = document.getElementById('generateActionItemsBtn');
+        if (generateActionItemsBtn) {
+            generateActionItemsBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                ui.generateContent('action-items');
+            });
+        }
+
+        const resetButton = document.getElementById('resetButton');
+        if (resetButton) {
+            resetButton.addEventListener('click', () => {
+                currentFile = null;
+                ui.resetApp();
+                ui.showScreen('inputScreen');
+            });
+        }
+    };
+
+    // Setup result screen buttons
+    setupResultScreenButtons();
 
     // Add clear history button handler
     const clearHistoryBtn = document.getElementById('clearHistoryBtn');
@@ -292,14 +305,6 @@ window.addEventListener('componentsLoaded', async () => {
             console.error('Recording processing failed:', error);
             ui.showTemporaryMessage(error.message, true);
         }
-    });
-
-    // Reset Button Click
-    const resetButton = document.getElementById('resetButton');
-    resetButton.addEventListener('click', () => {
-        currentFile = null;
-        ui.resetApp();
-        ui.showScreen('inputScreen');
     });
 });
 

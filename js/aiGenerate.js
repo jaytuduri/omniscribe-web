@@ -18,8 +18,10 @@ export class AIGenerate {
                 icon: 'fas fa-pencil-alt'
             }
         };
-        // Wait a bit before setting up event listeners to ensure DOM is ready
-        setTimeout(() => this.setupEventListeners(), 0);
+    }
+
+    initialize() {
+        this.setupEventListeners();
     }
 
     setupEventListeners() {
@@ -32,9 +34,9 @@ export class AIGenerate {
         ];
 
         buttons.forEach(({ id, mode }) => {
-            const button = document.getElementById(id);
-            if (button) {
-                button.addEventListener('click', (e) => {
+            const link = document.getElementById(id);
+            if (link) {
+                link.addEventListener('click', (e) => {
                     e.preventDefault();
                     this.generateContent(mode);
                 });
@@ -93,14 +95,14 @@ export class AIGenerate {
             }
 
             // Show loading state in button
-            const button = document.getElementById(`generate${mode.charAt(0).toUpperCase() + mode.slice(1)}Btn`);
-            if (!button) {
+            const link = document.getElementById(`generate${mode.charAt(0).toUpperCase() + mode.slice(1)}Btn`);
+            if (!link) {
                 throw new Error(`Generate ${mode} button not found`);
             }
 
-            const originalHTML = button.innerHTML;
-            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
-            button.disabled = true;
+            const originalHTML = link.innerHTML;
+            link.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+            link.style.pointerEvents = 'none';
 
             try {
                 let options = { temperature: 0.7 };
@@ -114,11 +116,12 @@ export class AIGenerate {
                     options.custom_prompt = customPrompt;
                 }
 
-                const result = await window.api.generateText(text, mode.toUpperCase(), options);
+                // Pass mode directly without converting to uppercase
+                const result = await window.api.generateText(text, mode, options);
                 window.uiManager.showGeneratedContent(`${this.modes[mode].name} Result`, result.text);
             } finally {
-                button.innerHTML = originalHTML;
-                button.disabled = false;
+                link.innerHTML = originalHTML;
+                link.style.pointerEvents = 'auto';
             }
         } catch (error) {
             console.error('Error in AI generate:', error);

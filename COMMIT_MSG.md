@@ -1,6 +1,6 @@
-feat: Implement AI Text Generation and Fix Core Functionality
+feat: Implement AI Text Generation and Fix Core Functionality, AI Generation Features and Component Loading
 
-This commit adds AI text generation capabilities and fixes several core functionality issues in the transcription workflow.
+This commit adds AI text generation capabilities, fixes several core functionality issues in the transcription workflow, and addresses issues with AI generation features and component loading.
 
 New Files:
 - `js/config.js`: Central configuration for API endpoints and supported media formats
@@ -35,6 +35,13 @@ Key Changes:
    - Update blog mode to blog_post to match API expectations
    - Ensure consistent mode values across frontend and API
 
+6. AI Generation Fixes
+   - Fixed race condition in AI generation feature initialization
+   - Added proper DOM readiness checks before accessing elements
+   - Improved event listener setup for AI generation buttons
+   - Reorganized button event listener setup for better maintainability
+   - Updated component loading to ensure DOM is fully parsed before initialization
+
 File Details:
 
 config.js:
@@ -59,6 +66,12 @@ aiGenerate.js:
   * Blog post generation
   * Custom content generation
 - Handles generation options and results
+
+Technical Changes:
+- Added double requestAnimationFrame in components.js for DOM readiness
+- Moved AI feature initialization into componentsLoaded event
+- Created setupResultScreenButtons function for better organization
+- Removed setTimeout delay in favor of proper event handling
 
 Testing:
 - Verified file upload and transcription
