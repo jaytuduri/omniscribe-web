@@ -253,6 +253,55 @@ function initializeTranscriptionOptions() {
     }
 }
 
+export function showSavedTranscriptions(transcriptions) {
+    const transcriptionsList = document.createElement('div');
+    transcriptionsList.className = 'transcriptions-list';
+
+    transcriptions.forEach(transcription => {
+        const item = document.createElement('div');
+        item.className = 'transcription-item';
+        
+        const header = document.createElement('div');
+        header.className = 'transcription-header';
+        
+        const timestamp = document.createElement('span');
+        timestamp.textContent = formatTimestamp(transcription.timestamp);
+        
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+        deleteBtn.onclick = () => {
+            window.app.deleteTranscription(transcription.id);
+            item.remove();
+        };
+        
+        const text = document.createElement('div');
+        text.className = 'transcription-text';
+        text.textContent = transcription.text.substring(0, 100) + (transcription.text.length > 100 ? '...' : '');
+        
+        const loadBtn = document.createElement('button');
+        loadBtn.className = 'load-btn';
+        loadBtn.textContent = 'Load';
+        loadBtn.onclick = () => {
+            updateTranscriptionText(transcription.text);
+            hideGeneratedContent();
+            showScreen('mainScreen');
+        };
+        
+        header.appendChild(timestamp);
+        header.appendChild(deleteBtn);
+        item.appendChild(header);
+        item.appendChild(text);
+        item.appendChild(loadBtn);
+        transcriptionsList.appendChild(item);
+    });
+
+    const content = document.querySelector('#generatedContent .content');
+    content.innerHTML = '';
+    content.appendChild(transcriptionsList);
+    showGeneratedContent('Saved Transcriptions', '');
+}
+
 // Make functions available globally
 window.uiManager = {
     showScreen,
@@ -270,5 +319,6 @@ window.uiManager = {
     showGeneratedContent,
     hideGeneratedContent,
     showTemporaryMessage,
-    initializeUI
+    initializeUI,
+    showSavedTranscriptions
 };

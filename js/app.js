@@ -2,6 +2,7 @@ import config from './config.js';
 import * as audioRecorder from './audioRecorder.js';
 import * as api from './api.js';
 import * as ui from './uiManager.js';
+import * as transcriptionManager from './transcriptionManager.js';
 
 // Theme Switcher
 function initializeThemeSwitcher() {
@@ -77,23 +78,124 @@ async function handleFileUpload(file) {
 async function handleTranscription(file) {
     try {
         ui.showScreen('progressScreen');
-
         const options = ui.getTranscriptionOptions();
-        const response = await api.uploadAudio(file, options);
-
-        ui.updateTranscriptionText(response.text);
-        ui.showScreen('resultScreen');
+        const result = await api.transcribe(file, options);
+        const formattedResult = ui.formatTranscriptionResult(result, options.responseFormat);
+        ui.updateTranscriptionText(formattedResult);
+        
+        // Save the transcription
+        transcriptionManager.saveTranscription(formattedResult, options);
+        
+        ui.showScreen('mainScreen');
     } catch (error) {
-        console.error('Upload failed:', error);
-        ui.showTemporaryMessage(error.message, true);
-        ui.showScreen('inputScreen');
+        console.error('Transcription error:', error);
+        ui.showTemporaryMessage('Error during transcription. Please try again.', true);
+        ui.showScreen('mainScreen');
+    }
+}
+
+// Add new function to handle viewing saved transcriptions
+function viewSavedTranscriptions() {
+    const transcriptions = transcriptionManager.getAllTranscriptions();
+    ui.showSavedTranscriptions(transcriptions);
+}
+
+// Add new function to delete a transcription
+function deleteTranscription(id) {
+    transcriptionManager.deleteTranscription(id);
+}
+
+// Update the input screen with recent transcriptions
+function updateRecentTranscriptions() {
+    console.log('🔄 Updating recent transcriptions display');
+    const recentTranscriptions = transcriptionManager.getRecentTranscriptions();
+    const container = document.querySelector('.transcriptions-grid');
+    
+    if (!container) {
+        console.warn('⚠️ Transcriptions grid container not found');
+        return;
+    }
+    
+    if (recentTranscriptions.length === 0) {
+        console.log('ℹ️ No recent transcriptions to display');
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-history"></i>
+                <p>No recent transcriptions</p>
+            </div>`;
+        return;
+    }
+    
+    console.log('📝 Displaying', recentTranscriptions.length, 'recent transcriptions');
+    container.innerHTML = recentTranscriptions.map(transcription => `
+        <div class="transcription-card" data-id="${transcription.id}">
+            <div class="timestamp">
+                <i class="far fa-clock"></i> ${transcriptionManager.formatTimestamp(transcription.timestamp)}
+            </div>
+            <div class="preview">${transcription.text.substring(0, 150)}...</div>
+        </div>
+    `).join('');
+    
+    // Add click handlers to cards
+    container.querySelectorAll('.transcription-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const id = card.dataset.id;
+            console.log('🖱️ Clicked transcription card:', id);
+            const transcription = transcriptionManager.getTranscription(id);
+            if (transcription) {
+                console.log('📋 Loading transcription into main view');
+                ui.updateTranscriptionText(transcription.text);
+                ui.showScreen('mainScreen');
+            } else {
+                console.error('❌ Failed to load transcription:', id);
+            }
+        });
+    });
+}
+
+// Handle clearing all transcriptions
+function handleClearHistory() {
+    console.log('🗑️ Clear history button clicked');
+    if (confirm('Are you sure you want to clear all transcription history?')) {
+        console.log('✅ User confirmed clearing history');
+        transcriptionManager.clearAllTranscriptions();
+        updateRecentTranscriptions();
+    } else {
+        console.log('❌ User cancelled clearing history');
     }
 }
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 Initializing application');
     initializeThemeSwitcher();
-    ui.initializeUI();  // Initialize all UI components
+    ui.initializeUI();
+    
+    // Initialize recent transcriptions
+    console.log('📋 Initializing recent transcriptions');
+    updateRecentTranscriptions();
+    
+    // Add clear history button handler
+    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+    if (clearHistoryBtn) {
+        clearHistoryBtn.addEventListener('click', handleClearHistory);
+        console.log('✅ Clear history button handler attached');
+    } else {
+        console.warn('⚠️ Clear history button not found');
+    }
+
+    // Add "View Saved" button to the action buttons container
+    const actionButtons = document.querySelector('.action-buttons');
+    if (actionButtons) {
+        console.log('📎 Adding View Saved button to action buttons');
+        const viewSavedBtn = document.createElement('button');
+        viewSavedBtn.className = 'button secondary';
+        viewSavedBtn.innerHTML = '<i class="fas fa-history"></i> View Saved';
+        viewSavedBtn.onclick = viewSavedTranscriptions;
+        actionButtons.appendChild(viewSavedBtn);
+    } else {
+        console.warn('⚠️ Action buttons container not found');
+    }
 
     // File Input Change
     const fileInput = document.getElementById('fileInput');
@@ -153,3 +255,12 @@ document.addEventListener('DOMContentLoaded', () => {
         ui.showScreen('inputScreen');
     });
 });
+
+// Make functions available globally
+window.app = {
+    handleFileUpload,
+    handleTranscription,
+    deleteTranscription,
+    viewSavedTranscriptions,
+    updateRecentTranscriptions
+};
