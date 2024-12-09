@@ -14,11 +14,11 @@ export class ComponentLoader {
 
     static async loadAllComponents() {
         const components = [
-            { id: 'headerContainer', path: '../components/header.html' },
-            { id: 'inputScreenContainer', path: '../components/input-screen.html' },
-            { id: 'progressScreenContainer', path: '../components/progress-screen.html' },
-            { id: 'resultScreenContainer', path: '../components/result-screen.html' },
-            { id: 'footerContainer', path: '../components/footer.html' }
+            { id: 'headerContainer', path: './components/header.html' },
+            { id: 'inputScreenContainer', path: './components/input-screen.html' },
+            { id: 'progressScreenContainer', path: './components/progress-screen.html' },
+            { id: 'resultScreenContainer', path: './components/result-screen.html' },
+            { id: 'footerContainer', path: './components/footer.html' }
         ];
 
         for (const component of components) {

@@ -9,6 +9,11 @@ import { AIGenerate } from './aiGenerate.js';
 // Theme Switcher
 function initializeThemeSwitcher() {
     const themeToggle = document.getElementById('themeToggle');
+    if (!themeToggle) {
+        console.warn('Theme toggle element not found');
+        return;
+    }
+    
     const themeIcon = themeToggle.querySelector('i');
     const systemDarkMode = window.matchMedia('(prefers-color-scheme: dark)');
 
@@ -173,8 +178,10 @@ window.addEventListener('componentsLoaded', async () => {
     console.log('🚀 Initializing application');
     
     // Initialize core features
-    initializeThemeSwitcher();
     ui.initializeUI();
+    
+    // Initialize theme switcher after components are loaded
+    initializeThemeSwitcher();
     
     // Initialize recent transcriptions
     console.log('📋 Initializing recent transcriptions');
