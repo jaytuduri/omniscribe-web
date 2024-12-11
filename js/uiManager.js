@@ -214,13 +214,31 @@ export function showGeneratedContent(title, content) {
 }
 
 export function showTemporaryMessage(message, isError = false) {
-    const messageDiv = document.getElementById('errorMessage');
+    let messageDiv = document.getElementById('errorMessage');
+    
+    // Create the message div if it doesn't exist
+    if (!messageDiv) {
+        messageDiv = document.createElement('div');
+        messageDiv.id = 'errorMessage';
+        messageDiv.style.position = 'fixed';
+        messageDiv.style.top = '20px';
+        messageDiv.style.left = '50%';
+        messageDiv.style.transform = 'translateX(-50%)';
+        messageDiv.style.padding = '10px 20px';
+        messageDiv.style.borderRadius = '5px';
+        messageDiv.style.zIndex = '1000';
+        document.body.appendChild(messageDiv);
+    }
+    
     messageDiv.textContent = message;
     messageDiv.style.backgroundColor = isError ? '#ff4444' : '#44b544';
+    messageDiv.style.color = '#ffffff';
     messageDiv.style.display = 'block';
     
     setTimeout(() => {
-        messageDiv.style.display = 'none';
+        if (messageDiv && messageDiv.parentNode) {
+            messageDiv.style.display = 'none';
+        }
     }, 3000);
 }
 

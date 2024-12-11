@@ -2,72 +2,13 @@ import config from './config.js';
 import * as audioRecorder from './audioRecorder.js';
 import * as api from './api.js';
 import * as ui from './uiManager.js';
-import * as transcriptionManager from './transcriptionManager.js';
+import { TranscriptionManager } from './transcriptionManager.js';
 import { AICleanup } from './aiCleanup.js';
 import { AIGenerate } from './aiGenerate.js';
+import { ThemeManager } from './themeManager.js';
 
-// Theme Switcher
-function initializeThemeSwitcher() {
-    const themeToggle = document.getElementById('themeToggle');
-    if (!themeToggle) {
-        console.warn('Theme toggle element not found');
-        return;
-    }
-    
-    const themeIcon = themeToggle.querySelector('i');
-    const systemDarkMode = window.matchMedia('(prefers-color-scheme: dark)');
-
-    // Theme cycle: system -> light -> dark -> system
-    const themes = ['system', 'light', 'dark'];
-    const icons = {
-        system: 'fa-desktop',
-        light: 'fa-sun',
-        dark: 'fa-moon'
-    };
-
-    function getCurrentTheme() {
-        return localStorage.getItem('theme') || 'system';
-    }
-
-    function getNextTheme(currentTheme) {
-        const currentIndex = themes.indexOf(currentTheme);
-        return themes[(currentIndex + 1) % themes.length];
-    }
-
-    function updateThemeIcon(theme) {
-        // Remove all possible icons
-        themeIcon.classList.remove('fa-desktop', 'fa-sun', 'fa-moon');
-        // Add the correct icon
-        themeIcon.classList.add(icons[theme]);
-    }
-
-    function setTheme(theme) {
-        if (theme === 'system') {
-            document.documentElement.dataset.theme = systemDarkMode.matches ? 'dark' : 'light';
-        } else {
-            document.documentElement.dataset.theme = theme;
-        }
-        localStorage.setItem('theme', theme);
-        updateThemeIcon(theme);
-    }
-
-    // Add click event listener
-    themeToggle.addEventListener('click', () => {
-        const currentTheme = getCurrentTheme();
-        const nextTheme = getNextTheme(currentTheme);
-        setTheme(nextTheme);
-    });
-
-    // Initialize theme
-    setTheme(getCurrentTheme());
-
-    // Listen for system theme changes
-    systemDarkMode.addEventListener('change', (e) => {
-        if (getCurrentTheme() === 'system') {
-            document.documentElement.dataset.theme = e.matches ? 'dark' : 'light';
-        }
-    });
-}
+// Track current file being processed
+let currentFile = null;
 
 // File Upload Handling
 async function handleFileUpload(file) {
@@ -92,88 +33,13 @@ async function handleTranscription(file) {
         ui.updateTranscriptionText(formattedResult);
         
         // Save the transcription
-        transcriptionManager.saveTranscription(formattedResult, options);
+        window.transcriptionManager.saveTranscription(formattedResult, options);
         
         ui.showScreen('resultScreen');
     } catch (error) {
         console.error('Transcription error:', error);
         ui.showTemporaryMessage('Error during transcription. Please try again.', true);
         ui.showScreen('inputScreen');
-    }
-}
-
-// Add new function to handle viewing saved transcriptions
-function viewSavedTranscriptions() {
-    const transcriptions = transcriptionManager.getAllTranscriptions();
-    ui.showSavedTranscriptions(transcriptions);
-}
-
-// Add new function to delete a transcription
-function deleteTranscription(id) {
-    transcriptionManager.deleteTranscription(id);
-}
-
-// Update the input screen with recent transcriptions
-function updateRecentTranscriptions() {
-    console.log('🔄 Updating recent transcriptions display');
-    const recentTranscriptions = transcriptionManager.getRecentTranscriptions();
-    const container = document.querySelector('.transcriptions-grid');
-    
-    if (!container) {
-        console.warn('⚠️ Transcriptions grid container not found');
-        return;
-    }
-    
-    if (recentTranscriptions.length === 0) {
-        console.log('ℹ️ No recent transcriptions to display');
-        container.innerHTML = `
-            <div class="empty-state">
-                <div class="empty-state-icon">
-                    <i class="fas fa-file-audio"></i>
-                    <i class="fas fa-wave-square"></i>
-                </div>
-                <p>Your recent transcriptions will appear here</p>
-                <span class="empty-state-hint">Get started by uploading a file or recording!</span>
-            </div>`;
-        return;
-    }
-    
-    console.log('📝 Displaying', recentTranscriptions.length, 'recent transcriptions');
-    container.innerHTML = recentTranscriptions.map(transcription => `
-        <div class="transcription-card" data-id="${transcription.id}">
-            <div class="timestamp">
-                <i class="far fa-clock"></i> ${transcriptionManager.formatTimestamp(transcription.timestamp)}
-            </div>
-            <div class="preview">${transcription.text.substring(0, 150)}...</div>
-        </div>
-    `).join('');
-    
-    // Add click handlers to cards
-    container.querySelectorAll('.transcription-card').forEach(card => {
-        card.addEventListener('click', () => {
-            const id = card.dataset.id;
-            console.log('🖱️ Clicked transcription card:', id);
-            const transcription = transcriptionManager.getTranscription(id);
-            if (transcription) {
-                console.log('📋 Loading transcription into main view');
-                ui.updateTranscriptionText(transcription.text);
-                ui.showScreen('resultScreen');
-            } else {
-                console.error('❌ Failed to load transcription:', id);
-            }
-        });
-    });
-}
-
-// Handle clearing all transcriptions
-function handleClearHistory() {
-    console.log('🗑️ Clear history button clicked');
-    if (confirm('Are you sure you want to clear all transcription history?')) {
-        console.log('✅ User confirmed clearing history');
-        transcriptionManager.clearAllTranscriptions();
-        updateRecentTranscriptions();
-    } else {
-        console.log('❌ User cancelled clearing history');
     }
 }
 
@@ -184,12 +50,24 @@ window.addEventListener('componentsLoaded', async () => {
     // Initialize core features
     ui.initializeUI();
     
-    // Initialize theme switcher after components are loaded
-    initializeThemeSwitcher();
+    // Wait for components to be fully loaded
+    await new Promise(resolve => {
+        const checkComponents = () => {
+            const allComponents = document.querySelector('.transcriptions-grid') && 
+                                document.getElementById('themeToggle');
+            if (allComponents) {
+                resolve();
+            } else {
+                setTimeout(checkComponents, 100);
+            }
+        };
+        checkComponents();
+    });
     
-    // Initialize recent transcriptions
-    console.log('📋 Initializing recent transcriptions');
-    updateRecentTranscriptions();
+    // Initialize managers after components are loaded
+    window.themeManager = new ThemeManager();
+    window.transcriptionManager = new TranscriptionManager();
+    window.transcriptionManager.updateDisplay();
     
     // Initialize AI features
     console.log('🤖 Initializing AI features');
@@ -247,7 +125,11 @@ window.addEventListener('componentsLoaded', async () => {
     // Add clear history button handler
     const clearHistoryBtn = document.getElementById('clearHistoryBtn');
     if (clearHistoryBtn) {
-        clearHistoryBtn.addEventListener('click', handleClearHistory);
+        clearHistoryBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to clear all transcription history?')) {
+                window.transcriptionManager.clearAllTranscriptions();
+            }
+        });
         console.log('✅ Clear history button handler attached');
     } else {
         console.warn('⚠️ Clear history button not found');
@@ -260,7 +142,10 @@ window.addEventListener('componentsLoaded', async () => {
         const viewSavedBtn = document.createElement('button');
         viewSavedBtn.className = 'button secondary';
         viewSavedBtn.innerHTML = '<i class="fas fa-history"></i> View Saved';
-        viewSavedBtn.onclick = viewSavedTranscriptions;
+        viewSavedBtn.onclick = () => {
+            const transcriptions = window.transcriptionManager.getAllTranscriptions();
+            ui.showSavedTranscriptions(transcriptions);
+        };
         actionButtons.appendChild(viewSavedBtn);
     } else {
         console.warn('⚠️ Action buttons container not found');
@@ -268,8 +153,6 @@ window.addEventListener('componentsLoaded', async () => {
 
     // File Input Change
     const fileInput = document.getElementById('fileInput');
-    let currentFile = null;
-
     fileInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -323,7 +206,10 @@ window.addEventListener('componentsLoaded', async () => {
 window.app = {
     handleFileUpload,
     handleTranscription,
-    deleteTranscription,
-    viewSavedTranscriptions,
-    updateRecentTranscriptions
+    viewSavedTranscriptions: () => {
+        const transcriptions = window.transcriptionManager.getAllTranscriptions();
+        ui.showSavedTranscriptions(transcriptions);
+    },
+    updateRecentTranscriptions: () => window.transcriptionManager.updateDisplay(),
+    deleteTranscription: (id) => window.transcriptionManager.deleteTranscription(id)
 };

@@ -1,65 +1,135 @@
-// Manages saving, loading, and deleting transcriptions using localStorage
-
+// Manages transcriptions including storage and UI rendering
 const STORAGE_KEY = 'omniscribe_transcriptions';
-const MAX_RECENT_TRANSCRIPTIONS = 6; // Show up to 6 recent transcriptions on start page
+const MAX_RECENT_TRANSCRIPTIONS = 6;
 
-// Get all saved transcriptions
-export function getAllTranscriptions() {
-    const transcriptions = localStorage.getItem(STORAGE_KEY);
-    const parsed = transcriptions ? JSON.parse(transcriptions) : [];
-    console.log('📚 Retrieved all transcriptions:', parsed.length, 'items');
-    return parsed;
-}
+export class TranscriptionManager {
+    constructor() {
+        this.container = document.querySelector('.transcriptions-grid');
+        if (!this.container) {
+            console.warn('⚠️ Transcriptions grid container not found');
+        }
+    }
 
-// Get recent transcriptions for the start page
-export function getRecentTranscriptions() {
-    const transcriptions = getAllTranscriptions();
-    const recent = transcriptions
-        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-        .slice(0, MAX_RECENT_TRANSCRIPTIONS);
-    console.log('🕒 Retrieved recent transcriptions:', recent.length, 'items');
-    return recent;
-}
+    // Storage Methods
+    getAllTranscriptions() {
+        const transcriptions = localStorage.getItem(STORAGE_KEY);
+        const parsed = transcriptions ? JSON.parse(transcriptions) : [];
+        console.log('📚 Retrieved all transcriptions:', parsed.length, 'items');
+        return parsed;
+    }
 
-// Save a new transcription
-export function saveTranscription(text, options = {}) {
-    const transcriptions = getAllTranscriptions();
-    const transcription = {
-        id: Date.now().toString(),
-        timestamp: '2024-12-09T20:51:23+01:00',
-        text,
-        options
-    };
-    
-    transcriptions.push(transcription);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(transcriptions));
-    console.log('💾 Saved new transcription:', { id: transcription.id, timestamp: transcription.timestamp });
-    return transcription;
-}
+    getRecentTranscriptions() {
+        const transcriptions = this.getAllTranscriptions();
+        const recent = transcriptions
+            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+            .slice(0, MAX_RECENT_TRANSCRIPTIONS);
+        console.log('🕒 Retrieved recent transcriptions:', recent.length, 'items');
+        return recent;
+    }
 
-// Delete a specific transcription
-export function deleteTranscription(id) {
-    const transcriptions = getAllTranscriptions();
-    const filteredTranscriptions = transcriptions.filter(t => t.id !== id);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(filteredTranscriptions));
-    console.log('🗑️ Deleted transcription:', id);
-}
+    saveTranscription(text, options = {}) {
+        const transcriptions = this.getAllTranscriptions();
+        const transcription = {
+            id: Date.now().toString(),
+            timestamp: new Date().toISOString(),
+            text,
+            options
+        };
+        
+        transcriptions.push(transcription);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(transcriptions));
+        console.log('💾 Saved new transcription:', { id: transcription.id, timestamp: transcription.timestamp });
+        
+        // Update UI after saving
+        this.updateDisplay();
+        return transcription;
+    }
 
-// Clear all transcriptions
-export function clearAllTranscriptions() {
-    localStorage.removeItem(STORAGE_KEY);
-    console.log('🧹 Cleared all transcriptions');
-}
+    deleteTranscription(id) {
+        const transcriptions = this.getAllTranscriptions();
+        const filteredTranscriptions = transcriptions.filter(t => t.id !== id);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(filteredTranscriptions));
+        console.log('🗑️ Deleted transcription:', id);
+        
+        // Update UI after deleting
+        this.updateDisplay();
+    }
 
-// Get a specific transcription by ID
-export function getTranscription(id) {
-    const transcriptions = getAllTranscriptions();
-    const transcription = transcriptions.find(t => t.id === id);
-    console.log('🔍 Retrieved transcription by ID:', id, transcription ? 'found' : 'not found');
-    return transcription;
-}
+    clearAllTranscriptions() {
+        localStorage.removeItem(STORAGE_KEY);
+        console.log('🧹 Cleared all transcriptions');
+        
+        // Update UI after clearing
+        this.updateDisplay();
+    }
 
-// Format timestamp for display
-export function formatTimestamp(timestamp) {
-    return new Date(timestamp).toLocaleString();
+    getTranscription(id) {
+        const transcriptions = this.getAllTranscriptions();
+        const transcription = transcriptions.find(t => t.id === id);
+        console.log('🔍 Retrieved transcription by ID:', id, transcription ? 'found' : 'not found');
+        return transcription;
+    }
+
+    formatTimestamp(timestamp) {
+        return new Date(timestamp).toLocaleString();
+    }
+
+    // UI Methods
+    updateDisplay() {
+        console.log('🔄 Updating recent transcriptions display');
+        if (!this.container) return;
+
+        const recentTranscriptions = this.getRecentTranscriptions();
+        
+        if (recentTranscriptions.length === 0) {
+            this.showEmptyState();
+            return;
+        }
+        
+        this.displayTranscriptions(recentTranscriptions);
+    }
+
+    showEmptyState() {
+        console.log('ℹ️ No recent transcriptions to display');
+        this.container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="fas fa-file-audio"></i>
+                    <i class="fas fa-wave-square"></i>
+                </div>
+                <p>Your recent transcriptions will appear here</p>
+                <span class="empty-state-hint">Get started by uploading a file or recording!</span>
+            </div>`;
+    }
+
+    displayTranscriptions(transcriptions) {
+        console.log('📝 Displaying', transcriptions.length, 'recent transcriptions');
+        this.container.innerHTML = transcriptions.map(transcription => `
+            <div class="transcription-card" data-id="${transcription.id}">
+                <div class="timestamp">
+                    <i class="far fa-clock"></i> ${this.formatTimestamp(transcription.timestamp)}
+                </div>
+                <div class="preview">${transcription.text.substring(0, 150)}...</div>
+            </div>
+        `).join('');
+        
+        this.attachCardClickHandlers();
+    }
+
+    attachCardClickHandlers() {
+        this.container.querySelectorAll('.transcription-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const id = card.dataset.id;
+                console.log('🖱️ Clicked transcription card:', id);
+                const transcription = this.getTranscription(id);
+                if (transcription) {
+                    console.log('📋 Loading transcription into main view');
+                    window.ui.updateTranscriptionText(transcription.text);
+                    window.ui.showScreen('resultScreen');
+                } else {
+                    console.error('❌ Failed to load transcription:', id);
+                }
+            });
+        });
+    }
 }

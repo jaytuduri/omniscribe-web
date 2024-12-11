@@ -1,5 +1,5 @@
 // Cache versions
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v5';
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `dynamic-${CACHE_VERSION}`;
 const OFFLINE_PAGE = './offline.html';
@@ -16,6 +16,16 @@ const STATIC_ASSETS = [
   './styles/components/notifications.css',
   './icons/icon-192x192.png',
   './icons/icon-512x512.png',
+  './js/app.js',
+  './js/config.js',
+  './js/api.js',
+  './js/audioRecorder.js',
+  './js/components.js',
+  './js/uiManager.js',
+  './js/transcriptionManager.js',
+  './js/themeManager.js',
+  './js/aiCleanup.js',
+  './js/aiGenerate.js',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Silkscreen&display=swap',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
@@ -51,7 +61,7 @@ self.addEventListener('activate', (event) => {
 const timeoutFetch = (request, timeout = 5000) => {
   // Use a longer timeout for API requests
   if (request.url.includes('/api/')) {
-    timeout = 60000; // 1 minute for API requests
+    timeout = 300000; // 5 minutes for API requests
   }
   return Promise.race([
     fetch(request),

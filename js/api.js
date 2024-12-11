@@ -20,7 +20,7 @@ export async function uploadAudio(file, options = {}) {
     
     try {
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 60000); // 1 minute timeout
+        const timeout = setTimeout(() => controller.abort(), 300000); // 5 minute timeout
         
         const response = await fetch(config.API_BASE_URL + '/api/v1/audio/transcriptions', {
             method: 'POST',
