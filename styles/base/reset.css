@@ -12,7 +12,7 @@ body {
     padding: 1rem;
 }
 
-h2 {
+h2:not(#tagline h2) {
     font-family: 'Silkscreen', cursive;
     font-size: 1.4rem;
     font-weight: 400;

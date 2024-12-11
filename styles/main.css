@@ -17,5 +17,41 @@
 @import 'components/footer.css';
 @import 'components/theme-switcher.css';
 
+/* Tagline styles */
+#tagline {
+    text-align: center;
+    margin: 2rem auto;
+    padding: 1rem;
+    animation: fadeIn 0.8s ease-in;
+    max-width: 800px;
+}
+
+#tagline > h2 {
+    font-size: 2.5rem !important;
+    font-weight: 600 !important;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+    margin: 0 auto;
+    line-height: 1.2;
+    letter-spacing: -0.02em !important;
+    text-transform: none !important;
+    display: inline-block;
+}
+
+@media (max-width: 768px) {
+    #tagline > h2 {
+        font-size: 2rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    #tagline > h2 {
+        font-size: 1.75rem !important;
+    }
+}
+
 /* Animations */
 @import 'animations/animations.css';
