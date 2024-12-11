@@ -124,8 +124,8 @@ export class TranscriptionManager {
                 const transcription = this.getTranscription(id);
                 if (transcription) {
                     console.log('📋 Loading transcription into main view');
-                    window.ui.updateTranscriptionText(transcription.text);
-                    window.ui.showScreen('resultScreen');
+                    window.uiManager.updateTranscriptionText(transcription.text);
+                    window.uiManager.showScreen('resultScreen');
                 } else {
                     console.error('❌ Failed to load transcription:', id);
                 }
