@@ -216,6 +216,13 @@
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1rem;
     margin-top: 1rem;
+    width: 100%;
+}
+
+.transcriptions-grid:empty,
+.transcriptions-grid .empty-state {
+    grid-column: 1 / -1;
+    width: 100%;
 }
 
 .transcription-card {
@@ -252,12 +259,52 @@
     text-align: center;
     padding: 2rem;
     color: var(--text-color-secondary);
+    background: var(--surface-color);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    margin: 0 auto;
 }
 
-.empty-state i {
-    font-size: 2rem;
+.empty-state-icon {
+    position: relative;
+    display: inline-block;
     margin-bottom: 1rem;
-    opacity: 0.5;
+}
+
+.empty-state-icon i {
+    font-size: 2rem;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.empty-state-icon i:first-child {
+    margin-right: 0.5rem;
+    color: var(--primary-color);
+}
+
+.empty-state-icon i:last-child {
+    font-size: 1.5rem;
+    color: var(--gradient-start);
+}
+
+.empty-state p {
+    font-size: 0.95rem;
+    margin: 0 0 0.5rem 0;
+    color: var(--text-color);
+}
+
+.empty-state-hint {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+/* Hover effect */
+.empty-state:hover .empty-state-icon i {
+    opacity: 1;
 }
 
 /* Saved Transcriptions List Styles */

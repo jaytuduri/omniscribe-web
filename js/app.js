@@ -128,8 +128,12 @@ function updateRecentTranscriptions() {
         console.log('ℹ️ No recent transcriptions to display');
         container.innerHTML = `
             <div class="empty-state">
-                <i class="fas fa-history"></i>
-                <p>No recent transcriptions</p>
+                <div class="empty-state-icon">
+                    <i class="fas fa-file-audio"></i>
+                    <i class="fas fa-wave-square"></i>
+                </div>
+                <p>Your recent transcriptions will appear here</p>
+                <span class="empty-state-hint">Get started by uploading a file or recording!</span>
             </div>`;
         return;
     }
