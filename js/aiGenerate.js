@@ -9,7 +9,7 @@ export class AIGenerate {
                 name: 'Tweet Thread',
                 icon: 'fab fa-twitter'
             },
-            blog_post: {
+            blogPost: {
                 name: 'Blog Post',
                 icon: 'fas fa-blog'
             },
@@ -29,7 +29,7 @@ export class AIGenerate {
         const buttons = [
             { id: 'generateSummaryBtn', mode: 'summary' },
             { id: 'generateTweetBtn', mode: 'tweet' },
-            { id: 'generateBlogPostBtn', mode: 'blog_post' },
+            { id: 'generateBlogPostBtn', mode: 'blogPost' },
             { id: 'generateCustomBtn', mode: 'custom' }
         ];
 
